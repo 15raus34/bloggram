@@ -1,0 +1,181 @@
+#main-interface {
+  width: 80vw;
+  /* border: 1px solid black; */
+  margin: 10px auto;
+  display: flex;
+  justify-content: center;
+}
+#main-interface > div {
+  margin: 20px;
+}
+.cardup {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+}
+.cardup:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+.sub-interface-userdetail,
+.sub-interface-news {
+  width: 20%;
+  /* border: 2px solid red; */
+  position: relative;
+}
+.sub-interface-blog {
+  width: 45%;
+  /* border: 1px solid green; */
+}
+/* .upper-brief-detail {
+  border: 5px dashed purple;
+} */
+.col-color {
+  height: 15vh;
+  background-color: var(--theme-color);
+}
+.upper-brief-detail img {
+  height: 10vh;
+  border: 1px solid black;
+  border-radius: 50%;
+  position: absolute;
+  top: 9vh;
+  left: 37%;
+}
+.userdetails {
+  margin: 20% 0 0 0;
+  /* border: 1px solid purple; */
+  flex-direction: column;
+}
+.name-profession {
+  border: 1px solid black;
+  flex-direction: column;
+}
+.name-profession h2 {
+  font-size: 25px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+.name-profession p {
+  font-family: cursive;
+  font-size: 10px;
+  font-style: italic;
+}
+.userfollow {
+  flex-direction: column;
+  margin: 10px 0;
+  padding: 15px 0;
+  width: 100%;
+  border-top: 2px solid black;
+}
+.userfollow > p {
+  font-size: 25px;
+}
+.userfollow > span {
+  font-size: 70px;
+}
+.lower-suggestion {
+  /* border: 2px solid black; */
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 20px;
+}
+.lower-suggestion h3 {
+  padding: 3vh 0 0 2vh;
+  font-size: 3vh;
+}
+.lower-suggestion img {
+  height: 5vh;
+}
+.suggest-user > div {
+  margin: 3vh 0;
+  justify-content: flex-start;
+}
+.suggest-user > div > * {
+  margin: 0 10px;
+}
+.suggest-user a {
+  text-decoration: none;
+  font-size: 18px;
+  color: black;
+}
+.minidetail > p {
+  font-size: 10px;
+  font-style: italic;
+  color: grey;
+}
+
+.userblog {
+  /* border: 1px dashed blueviolet; */
+  margin: 10px;
+  padding: 10px;
+}
+.userblog-profile {
+  justify-content: flex-start;
+}
+.userblog-profile img {
+  height: 8vh;
+  border-radius: 50%;
+  margin: 10px 20px 0;
+}
+.userblog-profile-nameposition h3 {
+  font-size: 2.5vh;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+.userblog-profile-nameposition h5 {
+  font-size: 1.5vh;
+  color: grey;
+  font-style: italic;
+  font-family: cursive;
+}
+.userblog-post {
+  margin: 15px;
+}
+.userblog-post p {
+  font-size: 2.3vh;
+  text-align: justify;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+.userblog-interaction {
+  justify-content: flex-end;
+}
+.userinteract-btn {
+  font-size: 2.5vh;
+}
+.userinteract-btn i {
+  margin: 0 10px 0 0;
+}
+/* .news-upper {
+  border: 1px solid red;
+} */
+.slogan {
+  height: 40vh;
+  flex-direction: column;
+}
+.slogan img {
+  height: 40%;
+}
+.slogan > p {
+  font-size: 5vh;
+  margin-top: 20px;
+}
+.slogan > span {
+  font-size: 3vh;
+  margin-top: 5px;
+  font-style: italic;
+  color: grey;
+}
+.news-lower {
+  margin-top: 3vh;
+}
+.news-lower h3 {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding: 3vh 0 0 2vh;
+  font-size: 3vh;
+}
+.newscard {
+  padding: 5px;
+  font-size: 2.3vh;
+  margin: 2vh 0;
+  text-align: justify;
+  border-bottom: 0.5px solid grey;
+}
