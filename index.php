@@ -12,8 +12,8 @@
   <body>
     <nav>
       <div class="nav-left-items d-flex">
-        <img src="./img/logo.png" alt="logo" height="40vh" />
-        <h3>Job Blog</h3>
+        <img src="./img/logonobg.png" alt="logo" height="70vh" />
+        <h3>BLOGGRAM</h3>
       </div>
       <div class="nav-right-items d-flex">
         <div class="user-pic">
@@ -276,12 +276,12 @@
         <div class="news-upper cardup">
           <div class="slogan d-flex">
             <img src="./img/logo.png" alt="logo" height="40vh" />
-            <p>get together</p>
-            <span>hiihihi</span>
+            <p>BLOG GRAM</p>
+            <span>we blog to perfection</span>
           </div>
           <hr />
           <div class="signupnow d-flex">
-            <a href="#"><button class="btn userinteract-btn">logout</button></a>
+            <a href="#"><button class="btn userinteract-btn">Dashboard</button></a>
           </div>
         </div>
         <div class="news-lower cardup">

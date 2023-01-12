@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Short+Stack&display=swap');
 #main-interface {
   width: 80vw;
   /* border: 1px solid black; */
@@ -46,7 +47,7 @@
   flex-direction: column;
 }
 .name-profession {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   flex-direction: column;
 }
 .name-profession h2 {
@@ -140,6 +141,7 @@
 }
 .userinteract-btn {
   font-size: 2.5vh;
+  margin: 10px;
 }
 .userinteract-btn i {
   margin: 0 10px 0 0;
@@ -155,12 +157,14 @@
   height: 40%;
 }
 .slogan > p {
-  font-size: 5vh;
+  font-size: 4.45vh;
   margin-top: 20px;
+  font-family: 'Short Stack', cursive;
 }
 .slogan > span {
-  font-size: 3vh;
-  margin-top: 5px;
+  font-size: 2.5vh;
+  font-family: cursive;
+  margin-top: 3px;
   font-style: italic;
   color: grey;
 }

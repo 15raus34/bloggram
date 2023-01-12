@@ -1,0 +1,5 @@
+CREATE TABLE `bloggram1534`.`userdetails` (`id` INT(99) NOT NULL AUTO_INCREMENT , `name` VARCHAR(40) NOT NULL , `useremail` VARCHAR(60) NOT NULL , `username` VARCHAR(25) NOT NULL , `password` VARCHAR(225) NOT NULL , `phone_no` VARCHAR(15) NULL DEFAULT NULL , `user_photo` LONGBLOB NULL DEFAULT NULL , `security_code` VARCHAR(225) NULL DEFAULT NULL , `createdTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+INSERT INTO `userdetails` (`id`, `name`, `useremail`, `username`, `password`, `phone_no`, `user_photo`, `security_code`, `createdTime`) VALUES (NULL, 'Raus Ray', 'rausaray1234@gmail.com', 'raus_raay', 'raus', NULL, NULL, NULL, current_timestamp());
+
+

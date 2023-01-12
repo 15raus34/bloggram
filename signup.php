@@ -1,0 +1,82 @@
+<?php
+session_start();
+if (isset($_SESSION['loggedIn'])) {
+  header("location:maininterface.php");
+  exit();
+}
+$exist = false;
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  include 'partials/dbconnect.php';
+  $name = $_POST["name"];
+  $useremail = $_POST["useremail"];
+  $username = $_POST["username"];
+  $password = $_POST["password"];
+  $repassword = $_POST["repassword"];
+  $userNameCheck = "SELECT * from `userdetails` WHERE `username` = '$username'";
+  $resultOfUserNameCheck = mysqli_query($con, $userNameCheck);
+  $numOfUserName = mysqli_num_rows($resultOfUserNameCheck);
+  if ($numOfUserName > 0) {
+    $exist = true;
+  } else {
+    $exist = false;
+    if (($password != "") && ($password == $repassword) && ($exist == false)) {
+      $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+      $sql = "INSERT INTO `userdetails` (`name`, `useremail`, `username`, `password`, `phone_no`, `user_photo`, `security_code`, `createdTime`) VALUES ('$name', '$useremail', '$username', '$passwordHash', NULL, NULL, NULL, current_timestamp())";
+      echo $username;
+      $result = mysqli_query($con, $sql);
+      if ($result) {
+        header("location:login.php");
+      }
+    }
+  }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SignUp</title>
+
+  <link rel="stylesheet" href="css/utils.css" />
+  <link rel="stylesheet" href="css/signup-login.css" />
+</head>
+
+<body>
+  <section class="container d-flex">
+    <div class="welcome-card">
+      <img src="./img/logo.png" alt="" />
+    </div>
+    <div class="form-card cardup">
+      <form method="post">
+        <div class="formcontent">
+          <label>Name</label>
+          <input type="text" name="name" placeholder="ENTER YOUR NAME" />
+        </div>
+        <div class="formcontent">
+          <label>Email</label>
+          <input type="em" name="useremail" placeholder="ENTER YOUR EMAIL" />
+        </div>
+        <div class="formcontent">
+          <label>Username</label>
+          <input type="text" name="username" placeholder="ENTER YOUR USERNAME" />
+        </div>
+        <div class="formcontent">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="ENTER YOUR PASSWORD" />
+        </div>
+        <div class="formcontent">
+          <label>Repassword</label>
+          <input type="password" name="repassword" placeholder="ENTER YOUR PASSWORD AGAIN" />
+        </div>
+        <div class="formcontent formcontent-btn">
+          <button class="btn" type="submit" name="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</body>
+
+</html>
