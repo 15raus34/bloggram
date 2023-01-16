@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (isset($_SESSION['loggedIn'])) {
-  header("location:maininterface.php");
+  header("location:./index.php");
   exit();
 }
 $exist = false;
@@ -9,6 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   include 'partials/dbconnect.php';
   $name = $_POST["name"];
   $useremail = $_POST["useremail"];
+  $usergender = $_POST["usergender"];
   $username = $_POST["username"];
   $password = $_POST["password"];
   $repassword = $_POST["repassword"];
@@ -21,11 +22,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $exist = false;
     if (($password != "") && ($password == $repassword) && ($exist == false)) {
       $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-      $sql = "INSERT INTO `userdetails` (`name`, `useremail`, `username`, `password`, `phone_no`, `user_photo`, `security_code`, `createdTime`) VALUES ('$name', '$useremail', '$username', '$passwordHash', NULL, NULL, NULL, current_timestamp())";
-      echo $username;
+      $sql = "INSERT INTO `userdetails` (`name`, `useremail`, `usergender`, `userposition`, `phone_no`, `username`, `password`, `userphoto`, `securitycode`, `createdtime`) VALUES ('$name', '$useremail', '$usergender', 'Bloggram User', NULL, '$username', '$passwordHash', NULL, NULL, current_timestamp())";
       $result = mysqli_query($con, $sql);
       if ($result) {
-        header("location:login.php");
+        header("location:./login.php");
       }
     }
   }
@@ -57,7 +57,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <div class="formcontent">
           <label>Email</label>
-          <input type="em" name="useremail" placeholder="ENTER YOUR EMAIL" />
+          <input type="email" name="useremail" placeholder="ENTER YOUR EMAIL" />
+        </div>
+        <div class="formcontent">
+          <label>Gender</label>
+          <span><input type="radio" name="usergender" value="Male" checked />Male</span>
+          <span><input type="radio" name="usergender" value="Female" />Female</span>
         </div>
         <div class="formcontent">
           <label>Username</label>

@@ -1,3 +1,6 @@
+:root {
+  --theme-color: #7e23cf;
+}
 .d-flex {
   display: flex;
   align-items: center;
@@ -12,7 +15,6 @@
 }
 .btn {
   padding: 2px 9px;
-  background: var(--primarycolor);
   border: 2px solid black;
   font-size: 3vh;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,

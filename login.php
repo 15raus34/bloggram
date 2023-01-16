@@ -3,7 +3,7 @@ session_start();
 $login = true;
 
 if (isset($_SESSION['loggedIn'])) {
-  header("location:maininterface.php");
+  header("location:./index.php");
   exit();
 }
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -17,14 +17,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     while ($row = mysqli_fetch_assoc($resultOfUserCheck)) {
       if (password_verify($password, $row['password'])) {
         $login = true;
-        session_start();
         $_SESSION['loggedIn'] = true;
-        $_SESSION['username'] = $username;
+        $_SESSION['name'] = $row["name"];
+        $_SESSION['username'] = $row["username"];
+        $_SESSION['useremail'] = $row["useremail"];
+        $_SESSION['usergender'] = $row["usergender"];
+        $_SESSION['userposition'] = $row["userposition"];
+        $_SESSION['phone_no'] = $row["phone_no"];
+        $_SESSION['security_code'] = $row["security_code"];
         if ($username == "admin") {
           header("location:admin.php");
           exit();
         } else {
-          header("location:index.php");
+          header("location:./index.php");
         }
       } else {
         $login = false;

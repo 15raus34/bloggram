@@ -1,5 +1,10 @@
-CREATE TABLE `bloggram1534`.`userdetails` (`id` INT(99) NOT NULL AUTO_INCREMENT , `name` VARCHAR(40) NOT NULL , `useremail` VARCHAR(60) NOT NULL , `username` VARCHAR(25) NOT NULL , `password` VARCHAR(225) NOT NULL , `phone_no` VARCHAR(15) NULL DEFAULT NULL , `user_photo` LONGBLOB NULL DEFAULT NULL , `security_code` VARCHAR(225) NULL DEFAULT NULL , `createdTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+CREATE DATABASE bloggram1534;
 
-INSERT INTO `userdetails` (`id`, `name`, `useremail`, `username`, `password`, `phone_no`, `user_photo`, `security_code`, `createdTime`) VALUES (NULL, 'Raus Ray', 'rausaray1234@gmail.com', 'raus_raay', 'raus', NULL, NULL, NULL, current_timestamp());
+CREATE TABLE `bloggram1534`.`userdetails` (`id` INT(255) NOT NULL AUTO_INCREMENT , `name` VARCHAR(60) NOT NULL , `useremail` VARCHAR(60) NOT NULL , `usergender` VARCHAR(7) NOT NULL , `userposition` VARCHAR(100) NOT NULL DEFAULT 'Bloggram User' , `phone_no` VARCHAR(15) NULL DEFAULT NULL , `username` VARCHAR(35) NOT NULL , `password` VARCHAR(225) NOT NULL , `userphoto` LONGBLOB NULL DEFAULT NULL , `securitycode` VARCHAR(225) NULL DEFAULT NULL , `createdtime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
 
 
+INSERT INTO `userdetails` (`id`, `name`, `useremail`, `usergender`, `userposition`, `phone_no`, `username`, `password`, `userphoto`, `securitycode`, `createdtime`) VALUES (NULL, 'Raus Ray', 'rausaray1234@gmail.com', 'Male', 'Bloggram User', NULL, 'raus_raay', 'raus', NULL, NULL, current_timestamp());
+
+CREATE TABLE `bloggram1534`.`userposts` (`id` INT(255) NOT NULL AUTO_INCREMENT , `username` VARCHAR(60) NOT NULL , `title` VARCHAR(60) NOT NULL , `description` VARCHAR(225) NOT NULL , `likes` INT(255) NOT NULL DEFAULT '0' , `createdtime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+INSERT INTO `userposts` (`id`, `username`, `title`, `description`, `likes`, `createdtime`) VALUES (NULL, 'raus_raay', 'hi', 'bye', '0', current_timestamp());
