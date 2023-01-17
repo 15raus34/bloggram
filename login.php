@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['usergender'] = $row["usergender"];
         $_SESSION['userposition'] = $row["userposition"];
         $_SESSION['phone_no'] = $row["phone_no"];
-        $_SESSION['security_code'] = $row["security_code"];
+        $_SESSION['securitycode'] = $row["securitycode"];
         if ($username == "admin") {
           header("location:admin.php");
           exit();
@@ -68,8 +68,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <label>Password</label>
           <input type="password" name="password" placeholder="ENTER YOUR PASSWORD" />
         </div>
-        <div class="formcontent formcontent-btn">
+        <div class="formcontent formcontent-btn d-flex">
           <button class="btn" type="submit" name="submit">Submit</button>
+          <span><a href="signup.php">Redirect to Sign Up</a></span>
         </div>
       </form>
     </div>

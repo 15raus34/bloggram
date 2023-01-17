@@ -78,6 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <div class="formcontent formcontent-btn">
           <button class="btn" type="submit" name="submit">Submit</button>
+          <span><a href="login.php">Redirect to Login</a></span>
         </div>
       </form>
     </div>

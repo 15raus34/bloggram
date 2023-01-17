@@ -93,9 +93,10 @@ $usergender = $_SESSION['usergender'];
 
           $SpecificUserName = $detailOfSpecificUser["name"];
           $SpecificUserPosition = $detailOfSpecificUser["userposition"];
+          $SpecificUserGender = $detailOfSpecificUser["usergender"];
           echo "<div class='userblog cardup'>
             <div class='userblog-profile d-flex'>
-              <img src='./img/male.png' alt='logo' />
+              <img src='./img/" . strtolower($SpecificUserGender) . ".png' alt='logo' />
               <div class='userblog-profile-nameposition'>
                 <h3>$SpecificUserName</h3>
                 <h5>$userposition</h5>

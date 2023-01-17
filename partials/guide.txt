@@ -1,3 +1,5 @@
+git push -u origin main
+
 CREATE DATABASE bloggram1534;
 
 CREATE TABLE `bloggram1534`.`userdetails` (`id` INT(255) NOT NULL AUTO_INCREMENT , `name` VARCHAR(60) NOT NULL , `useremail` VARCHAR(60) NOT NULL , `usergender` VARCHAR(7) NOT NULL , `userposition` VARCHAR(100) NOT NULL DEFAULT 'Bloggram User' , `phone_no` VARCHAR(15) NULL DEFAULT NULL , `username` VARCHAR(35) NOT NULL , `password` VARCHAR(225) NOT NULL , `userphoto` LONGBLOB NULL DEFAULT NULL , `securitycode` VARCHAR(225) NULL DEFAULT NULL , `createdtime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
