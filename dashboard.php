@@ -57,11 +57,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (isset($_GET['updatePostID'])) {
         $_SESSION['updatingPostId']=$updatingPostId = $_GET['updatePostID'];
-        $fetchupdatingPost = "SELECT * from `userposts` WHERE `id` = '$updatingPostId'";
+        $fetchupdatingPost = "SELECT * FROM `userposts` WHERE `id` = '$updatingPostId'";
         $resultOffetchupdatingPost = mysqli_query($con, $fetchupdatingPost);
         $row = mysqli_fetch_assoc($resultOffetchupdatingPost);
         $_SESSION['title'] = $row['title'];
         $_SESSION['description'] = $row['description'];
+    }
+    if (isset($_GET['deletePostID'])) {
+        $deletingPostId = $_GET['deletePostID'];
+        $deletingPost = "DELETE FROM `userposts` WHERE `id` = '$deletingPostId'";
+        $resultOfDeletingPost = mysqli_query($con, $deletingPost);
+        if($resultOfDeletingPost){
+            header("location:./dashboard.php");
+        }
     }
 }
 
@@ -138,6 +146,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                 <form method='get'>
                                     <a class='btn userinteract-btn' href='dashboard.php?updatePostID=$specificPostKoID' class='btn userinteract-btn' name='editOwnPost'>
                                     <i class='fa-solid fa-pen-to-square'></i>Edit
+                                    </a>
+                                    <a class='btn userinteract-btn' href='dashboard.php?deletePostID=$specificPostKoID' class='btn userinteract-btn' name='deleteOwnPost'>
+                                    <i class='fa-solid fa-trash'></i>Delete
                                     </a>
                                     </form>
                             </div>
