@@ -10,6 +10,7 @@ $userposition = $_SESSION['userposition'];
 $username = $_SESSION['username'];
 $usergender = $_SESSION['usergender'];
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    //To Save Post 
     if (isset($_POST['savePost'])) {
         $title = $_POST['title'];
         $description = $_POST['description'];
@@ -21,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("location:./dashboard.php");
         }
     }
-
+    //To Update The User's Position, Phone Number & Security Code
     if (isset($_POST['updateUserDetail'])) {
         $_SESSION['userposition'] = $userposition = $_POST['position'];
         $_SESSION['phone_no'] = $userphone_no = $_POST['phno'];
@@ -36,6 +37,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("location:./dashboard.php");
         }
     }
+
+    //To Update The Existing Post In Database
     if (isset($_POST['updateExistingPost'])) {
         $id = $_SESSION['updatingPostId'];
         $title = $_POST['title'];
@@ -51,23 +54,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("location:./dashboard.php");
         }
     }
-    
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
+
+    //To Get The Data Of Post From The Database. Further Update Is Done via Post Request
     if (isset($_GET['updatePostID'])) {
-        $_SESSION['updatingPostId']=$updatingPostId = $_GET['updatePostID'];
+        $_SESSION['updatingPostId'] = $updatingPostId = $_GET['updatePostID'];
         $fetchupdatingPost = "SELECT * FROM `userposts` WHERE `id` = '$updatingPostId'";
         $resultOffetchupdatingPost = mysqli_query($con, $fetchupdatingPost);
         $row = mysqli_fetch_assoc($resultOffetchupdatingPost);
         $_SESSION['title'] = $row['title'];
         $_SESSION['description'] = $row['description'];
     }
+
+    //To Delete The Existing Post 
     if (isset($_GET['deletePostID'])) {
         $deletingPostId = $_GET['deletePostID'];
         $deletingPost = "DELETE FROM `userposts` WHERE `id` = '$deletingPostId'";
         $resultOfDeletingPost = mysqli_query($con, $deletingPost);
-        if($resultOfDeletingPost){
+        if ($resultOfDeletingPost) {
+
+            //ReOrder Table(userposts) id After Deleting
+            $sql = "SET @count = 0";
+            mysqli_query($con, $sql);
+            $sql = "UPDATE userposts SET userposts.id = @count:= @count + 1";
+            mysqli_query($con, $sql);
+            $sql = "ALTER TABLE userposts AUTO_INCREMENT = 1";
+            mysqli_query($con, $sql);
+
             header("location:./dashboard.php");
         }
     }
@@ -137,6 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                 </div>
                             </div>
                             <div class='userblog-post'>
+                                <h1>$specificPostKoTitle</h1>
                                 <p>
                                 $specificPostKoDescription
                                 </p>
@@ -216,7 +232,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         echo "<button type='submit' name='updateUserDetail'>Save</button>";
                     }
                     ?>
-                    <button type="delete">Delete Account</button>
+                    <button type="delete" name="deleteAccount">Delete Account</button>
                 </div>
             </form>
         </div>

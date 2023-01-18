@@ -85,6 +85,7 @@ $usergender = $_SESSION['usergender'];
       if ($numOfPost > 0) {
         while ($row = mysqli_fetch_assoc($resultOfFetchPost)) {
           $specificUserKoName = $row['username'];
+          $title = $row['title'];
           $description = $row['description'];
 
           $fetchSpecificUser = "SELECT * from userdetails WHERE `username`= '$specificUserKoName'";
@@ -103,6 +104,7 @@ $usergender = $_SESSION['usergender'];
               </div>
             </div>
             <div class='userblog-post'>
+              <h1>$title</h1>
               <p>$description
               </p>
             </div>

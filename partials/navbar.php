@@ -1,6 +1,6 @@
 <nav>
     <div class="nav-left-items d-flex">
-        <img src="./img/logonobg.png" alt="logo" />
+        <a href="http://localhost/blogphp/index.php"><img src="./img/logonobg.png" alt="logo" /></a>
         <span>BLOG <br>GRAM</span>
     </div>
     <div class="nav-right-items d-flex">

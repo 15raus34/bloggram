@@ -71,3 +71,7 @@
   width: 25%;
   /* margin: auto; */
 }
+.sign-forget{
+  margin-right: 10px;
+  flex-direction: column;
+}

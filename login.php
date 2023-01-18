@@ -70,7 +70,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <div class="formcontent formcontent-btn d-flex">
           <button class="btn" type="submit" name="submit">Submit</button>
-          <span><a href="signup.php">Redirect to Sign Up</a></span>
+          <div class="sign-forget d-flex">
+            <span><a href="signup.php">Redirect to Sign Up</a></span>
+            <span><a href="./partials/forgetpassword.php">Forget Password?</a></span>
+          </div>
         </div>
       </form>
     </div>
