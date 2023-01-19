@@ -18,6 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       if (password_verify($password, $row['password'])) {
         $login = true;
         $_SESSION['loggedIn'] = true;
+        $_SESSION['id'] = $row["id"];
         $_SESSION['name'] = $row["name"];
         $_SESSION['username'] = $row["username"];
         $_SESSION['useremail'] = $row["useremail"];

@@ -15,7 +15,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $title = $_POST['title'];
         $description = $_POST['description'];
 
-        $sql = "INSERT INTO `userposts` (`username`, `title`, `description`, `likes`, `createdtime`) VALUES ('$username', '$title', '$description', '0', current_timestamp())";
+        $likes = array();
+        $serializedLikesArray = serialize($likes);
+
+        $sql = "INSERT INTO `userposts` (`username`, `title`, `description`, `likes`, `createdtime`) VALUES ('$username', '$title', '$description', '$serializedLikesArray', current_timestamp())";
 
         $result = mysqli_query($con, $sql);
         if ($result) {
@@ -143,6 +146,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         $specificPostKoTitle = $row['title'];
                         $specificPostKoDescription = $row['description'];
 
+                        $specificPostKoLikes = count(unserialize($row['likes']));
+
                         echo "<div class='userblog cardup'>
                             <div class='userblog-profile d-flex'>
                                 <img src='./img/" . strtolower($usergender) . ".png' alt='logo' />
@@ -159,7 +164,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                             </div>
                             <hr />
                             <div class='userblog-interaction d-flex'>
-                                <form method='get'>
+                                <span class='noOfLikes'>Likes: $specificPostKoLikes</span>
+                                <form method='GET'>
                                     <a class='btn userinteract-btn' href='dashboard.php?updatePostID=$specificPostKoID' class='btn userinteract-btn' name='editOwnPost'>
                                     <i class='fa-solid fa-pen-to-square'></i>Edit
                                     </a>

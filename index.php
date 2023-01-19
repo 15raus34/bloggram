@@ -5,10 +5,57 @@ if (!$_SESSION['loggedIn']) {
   header("location:./login.php");
 }
 include './partials/dbconnect.php';
+$userid = $_SESSION['id'];
 $name = $_SESSION['name'];
 $username = $_SESSION['username'];
 $userposition = $_SESSION['userposition'];
 $usergender = $_SESSION['usergender'];
+
+if(isset($_SESSION['tempID'])){
+  echo "<script>location.hash = '#".$_SESSION['tempID']."';</script>";
+  unset($_SESSION['tempID']);
+}
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+
+  //To Like The Post via GET Request [INTERACTION]
+  if (isset($_GET['likePostID'])) {
+    $likePostKoId = $_GET['likePostID'];
+    $fetchLikePost = "SELECT * from userposts WHERE `id`= '$likePostKoId'";
+    $resultOfFetchLikePost = mysqli_query($con, $fetchLikePost);
+    $detailOfLikePost = mysqli_fetch_assoc($resultOfFetchLikePost);
+
+    $unserializedLikePost = unserialize($detailOfLikePost['likes']);
+    array_push($unserializedLikePost, $userid);
+    $serializedLikePost = serialize($unserializedLikePost);
+
+    $updateLikeInPost = "UPDATE `userposts` SET `likes` = '$serializedLikePost' WHERE `userposts`.`id` = '$likePostKoId'";
+    $resultOfUpdateLikeInPost = mysqli_query($con, $updateLikeInPost);
+    if ($resultOfUpdateLikeInPost) {
+      $_SESSION['tempID'] = "post".$likePostKoId;
+      header("location:http://localhost/blogphp/index.php");
+    }
+  }
+
+  //To Dislike The Post via GET Request [INTERACTION]
+  if (isset($_GET['disLikePostID'])) {
+    $disLikePostKoId = $_GET['disLikePostID'];
+    $fetchDisLikePost = "SELECT * from userposts WHERE `id`= '$disLikePostKoId'";
+    $resultOfFetchDisLikePost = mysqli_query($con, $fetchDisLikePost);
+    $detailOfDisLikePost = mysqli_fetch_assoc($resultOfFetchDisLikePost);
+
+    $unserializedDisLikePost = unserialize($detailOfDisLikePost['likes']);
+    $unserializedDisLikePost = array_diff($unserializedDisLikePost, array($userid));
+    $serializedDisLikePost = serialize($unserializedDisLikePost);
+
+    $updateDisLikeInPost = "UPDATE `userposts` SET `likes` = '$serializedDisLikePost' WHERE `userposts`.`id` = '$disLikePostKoId'";
+    $resultOfUpdateDisLikeInPost = mysqli_query($con, $updateDisLikeInPost);
+    if ($resultOfUpdateDisLikeInPost) {
+      $_SESSION['tempID'] = "post".$disLikePostKoId;
+      header("location:http://localhost/blogphp/index.php");
+    }
+  }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,7 +77,7 @@ $usergender = $_SESSION['usergender'];
     <div class="sub-interface sub-interface-userdetail">
       <div class="upper-brief-detail cardup">
         <div class="col-color"></div>
-        <img src="./img/<?php echo strtolower($usergender)?>.png" alt="logo" />
+        <img src="./img/<?php echo strtolower($usergender) ?>.png" alt="logo" />
         <div class="userdetails d-flex">
           <div class="name-profession d-flex">
             <h2><?php echo $name ?></h2>
@@ -85,8 +132,12 @@ $usergender = $_SESSION['usergender'];
       if ($numOfPost > 0) {
         while ($row = mysqli_fetch_assoc($resultOfFetchPost)) {
           $specificUserKoName = $row['username'];
+          $id = $row['id'];
           $title = $row['title'];
           $description = $row['description'];
+
+          $didILike = in_array($userid, unserialize($row['likes']));
+          $likes = count(unserialize($row['likes']));
 
           $fetchSpecificUser = "SELECT * from userdetails WHERE `username`= '$specificUserKoName'";
           $resultOfFetchSpecificUser = mysqli_query($con, $fetchSpecificUser);
@@ -95,12 +146,12 @@ $usergender = $_SESSION['usergender'];
           $SpecificUserName = $detailOfSpecificUser["name"];
           $SpecificUserPosition = $detailOfSpecificUser["userposition"];
           $SpecificUserGender = $detailOfSpecificUser["usergender"];
-          echo "<div class='userblog cardup'>
+          echo "<div class='userblog cardup' id='post".$id."'>
             <div class='userblog-profile d-flex'>
               <img src='./img/" . strtolower($SpecificUserGender) . ".png' alt='logo' />
               <div class='userblog-profile-nameposition'>
                 <h3>$SpecificUserName</h3>
-                <h5>$userposition</h5>
+                <h5>$SpecificUserPosition</h5>
               </div>
             </div>
             <div class='userblog-post'>
@@ -109,14 +160,20 @@ $usergender = $_SESSION['usergender'];
               </p>
             </div>
             <hr />
-            <div class='userblog-interaction d-flex'>
-              <button class='btn userinteract-btn' id='like'>
-                <i class='fa-sharp fa-solid fa-heart'></i>Like
-              </button>
-              <button class='btn userinteract-btn' id='follow'>
-                <i class='fa-solid fa-cloud-bolt'></i>Follow
-              </button>
-            </div>
+            <form>
+              <div class='userblog-interaction d-flex'>";
+          echo (!$didILike) ? "
+                <a href='http://localhost/blogphp/index.php?likePostID=$id' class='btn userinteract-btn' id='like'>
+                  <i class='fa-sharp fa-solid fa-heart'></i>Like &nbsp;<span>$likes</span>
+                </a>" : "<a href='http://localhost/blogphp/index.php?disLikePostID=$id' class='btn userinteract-btn' id='disLike'>
+                <i class='fa-sharp fa-solid fa-heart'></i>Liked &nbsp;<span>$likes</span>
+              </a>";
+          echo "
+                <a class='btn userinteract-btn' id='follow'>
+                  <i class='fa-solid fa-cloud-bolt'></i>Follow
+                </a>
+              </div>
+            </form>
           </div>";
         }
       }
