@@ -23,8 +23,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (($password != "") && ($password == $repassword) && ($exist == false)) {
       $passwordHash = password_hash($password, PASSWORD_DEFAULT);
       $sql = "INSERT INTO `userdetails` (`name`, `useremail`, `usergender`, `userposition`, `phone_no`, `username`, `password`, `userphoto`, `securitycode`, `createdtime`) VALUES ('$name', '$useremail', '$usergender', 'Bloggram User', NULL, '$username', '$passwordHash', NULL, NULL, current_timestamp())";
-      $result = mysqli_query($con, $sql);
-      if ($result) {
+      $result1 = mysqli_query($con, $sql);
+
+      $serializedArray = serialize(array());
+      $sql = "INSERT INTO `userfollowfollowing` (`username`, `follow`, `following`) VALUES ('$username', '$serializedArray', '$serializedArray')";
+      $result2 = mysqli_query($con, $sql);
+      if ($result1 && $result2) {
         header("location:./login.php");
       }
     }

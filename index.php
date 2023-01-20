@@ -11,8 +11,8 @@ $username = $_SESSION['username'];
 $userposition = $_SESSION['userposition'];
 $usergender = $_SESSION['usergender'];
 
-if(isset($_SESSION['tempID'])){
-  echo "<script>location.hash = '#".$_SESSION['tempID']."';</script>";
+if (isset($_SESSION['tempID'])) {
+  echo "<script>location.hash = '#" . $_SESSION['tempID'] . "';</script>";
   unset($_SESSION['tempID']);
 }
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $updateLikeInPost = "UPDATE `userposts` SET `likes` = '$serializedLikePost' WHERE `userposts`.`id` = '$likePostKoId'";
     $resultOfUpdateLikeInPost = mysqli_query($con, $updateLikeInPost);
     if ($resultOfUpdateLikeInPost) {
-      $_SESSION['tempID'] = "post".$likePostKoId;
+      $_SESSION['tempID'] = "post" . $likePostKoId;
       header("location:http://localhost/blogphp/index.php");
     }
   }
@@ -50,7 +50,73 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $updateDisLikeInPost = "UPDATE `userposts` SET `likes` = '$serializedDisLikePost' WHERE `userposts`.`id` = '$disLikePostKoId'";
     $resultOfUpdateDisLikeInPost = mysqli_query($con, $updateDisLikeInPost);
     if ($resultOfUpdateDisLikeInPost) {
-      $_SESSION['tempID'] = "post".$disLikePostKoId;
+      $_SESSION['tempID'] = "post" . $disLikePostKoId;
+      header("location:http://localhost/blogphp/index.php");
+    }
+  }
+
+  //To Follow The User via GET Request [INTERACTION]
+  if (isset($_GET['followUserID'])) {
+    $userKoId = $_GET['followUserID']; //Other User's ID
+
+    //Updating LoggedIn User's Following List
+    $fetchLoggedInUserKoFollowing = "SELECT * from userfollowfollowing WHERE `id`= '$userid'";
+    $resultOfFetchLoggedInUserKoFollowing = mysqli_query($con, $fetchLoggedInUserKoFollowing);
+    $detailOfLoggedInUserKoFollowing = mysqli_fetch_assoc($resultOfFetchLoggedInUserKoFollowing);
+
+    $unserializedLoggedInUserKoFollowing = unserialize($detailOfLoggedInUserKoFollowing['following']);
+    array_push($unserializedLoggedInUserKoFollowing, $userKoId);
+    $serializedLoggedInUserKoFollowing = serialize($unserializedLoggedInUserKoFollowing);
+
+    $updateLoggedInUserKoFollowing = "UPDATE `userfollowfollowing` SET `following` = '$serializedLoggedInUserKoFollowing' WHERE `userfollowfollowing`.`id` = '$userid'";
+    $resultOfLoggedInUserKoFollowing = mysqli_query($con, $updateLoggedInUserKoFollowing);
+
+    //Updating Other User's Followers List
+    $fetchOtherUserKoFollowers = "SELECT * from userfollowfollowing WHERE `id`= '$userKoId'";
+    $resultOfFetchOtherUserKoFollowers = mysqli_query($con, $fetchOtherUserKoFollowers);
+    $detailOfFetchOtherUserKoFollowers = mysqli_fetch_assoc($resultOfFetchOtherUserKoFollowers);
+
+    $unserializedOtherUserKoFollowers = unserialize($detailOfFetchOtherUserKoFollowers['follow']);
+    array_push($unserializedOtherUserKoFollowers, $userid);
+    $serializedOtherUserKoFollowers = serialize($unserializedOtherUserKoFollowers);
+
+    $updateOtherUserKoFollowers = "UPDATE `userfollowfollowing` SET `follow` = '$serializedOtherUserKoFollowers' WHERE `userfollowfollowing`.`id` = '$userKoId'";
+    $resultOfOtherUserKoFollowers = mysqli_query($con, $updateOtherUserKoFollowers);
+    if ($resultOfLoggedInUserKoFollowing && $resultOfOtherUserKoFollowers) {
+      $_SESSION['tempID'] = "post" . $_GET['postID'];
+      header("location:http://localhost/blogphp/index.php");
+    }
+  }
+
+  //To Unfollow The User via GET Request [INTERACTION]
+  if (isset($_GET['unFollowUserID'])) {
+    $userKoId = $_GET['unFollowUserID']; //Other User's ID
+
+    //Updating LoggedIn User's Following List
+    $fetchLoggedInUserKoFollowing = "SELECT * from userfollowfollowing WHERE `id`= '$userid'";
+    $resultOfFetchLoggedInUserKoFollowing = mysqli_query($con, $fetchLoggedInUserKoFollowing);
+    $detailOfLoggedInUserKoFollowing = mysqli_fetch_assoc($resultOfFetchLoggedInUserKoFollowing);
+
+    $unserializedLoggedInUserKoFollowing = unserialize($detailOfLoggedInUserKoFollowing['following']);
+    $unserializedLoggedInUserKoFollowing = array_diff($unserializedLoggedInUserKoFollowing, array($userKoId));
+    $serializedLoggedInUserKoFollowing = serialize($unserializedLoggedInUserKoFollowing);
+
+    $updateLoggedInUserKoFollowing = "UPDATE `userfollowfollowing` SET `following` = '$serializedLoggedInUserKoFollowing' WHERE `userfollowfollowing`.`id` = '$userid'";
+    $resultOfLoggedInUserKoFollowing = mysqli_query($con, $updateLoggedInUserKoFollowing);
+
+    //Updating Other User's Followers List
+    $fetchOtherUserKoFollowers = "SELECT * from userfollowfollowing WHERE `id`= '$userKoId'";
+    $resultOfFetchOtherUserKoFollowers = mysqli_query($con, $fetchOtherUserKoFollowers);
+    $detailOfFetchOtherUserKoFollowers = mysqli_fetch_assoc($resultOfFetchOtherUserKoFollowers);
+
+    $unserializedOtherUserKoFollowers = unserialize($detailOfFetchOtherUserKoFollowers['follow']);
+    $unserializedOtherUserKoFollowers = array_diff($unserializedOtherUserKoFollowers, array($userid));
+    $serializedOtherUserKoFollowers = serialize($unserializedOtherUserKoFollowers);
+
+    $updateOtherUserKoFollowers = "UPDATE `userfollowfollowing` SET `follow` = '$serializedOtherUserKoFollowers' WHERE `userfollowfollowing`.`id` = '$userKoId'";
+    $resultOfOtherUserKoFollowers = mysqli_query($con, $updateOtherUserKoFollowers);
+    if ($resultOfLoggedInUserKoFollowing && $resultOfOtherUserKoFollowers) {
+      $_SESSION['tempID'] = "post" . $_GET['postID'];
       header("location:http://localhost/blogphp/index.php");
     }
   }
@@ -129,6 +195,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
       $resultOfFetchPost = mysqli_query($con, $fetchPost);
       $numOfPost = mysqli_num_rows($resultOfFetchPost);
 
+      $fetchFollowingList = "SELECT * from userfollowfollowing WHERE `username`= '$username'";
+      $resultOfFetchFollowingList = mysqli_query($con, $fetchFollowingList);
+      $iAmFollowing = unserialize((mysqli_fetch_assoc($resultOfFetchFollowingList))['following']);
+
       if ($numOfPost > 0) {
         while ($row = mysqli_fetch_assoc($resultOfFetchPost)) {
           $specificUserKoName = $row['username'];
@@ -143,10 +213,14 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
           $resultOfFetchSpecificUser = mysqli_query($con, $fetchSpecificUser);
           $detailOfSpecificUser = mysqli_fetch_assoc($resultOfFetchSpecificUser);
 
+          $SpecificUserID = $detailOfSpecificUser["id"];
           $SpecificUserName = $detailOfSpecificUser["name"];
           $SpecificUserPosition = $detailOfSpecificUser["userposition"];
           $SpecificUserGender = $detailOfSpecificUser["usergender"];
-          echo "<div class='userblog cardup' id='post".$id."'>
+
+          $amIFollowing = in_array($SpecificUserID, $iAmFollowing);
+
+          echo "<div class='userblog cardup' id='post" . $id . "'>
             <div class='userblog-profile d-flex'>
               <img src='./img/" . strtolower($SpecificUserGender) . ".png' alt='logo' />
               <div class='userblog-profile-nameposition'>
@@ -168,10 +242,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 </a>" : "<a href='http://localhost/blogphp/index.php?disLikePostID=$id' class='btn userinteract-btn' id='disLike'>
                 <i class='fa-sharp fa-solid fa-heart'></i>Liked &nbsp;<span>$likes</span>
               </a>";
-          echo "
-                <a class='btn userinteract-btn' id='follow'>
+          echo (!$amIFollowing) ? "
+                <a href='http://localhost/blogphp/index.php?followUserID=$SpecificUserID&postID=$id' class='btn userinteract-btn' id='follow'>
                   <i class='fa-solid fa-cloud-bolt'></i>Follow
-                </a>
+                </a>" : "<a href='http://localhost/blogphp/index.php?unFollowUserID=$SpecificUserID' class='btn userinteract-btn' id='follow'>
+                <i class='fa-solid fa-cloud-bolt'></i>Followed
+              </a>";
+          echo "
               </div>
             </form>
           </div>";
