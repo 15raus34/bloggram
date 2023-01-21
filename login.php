@@ -18,6 +18,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       if (password_verify($password, $row['password'])) {
         $login = true;
         $_SESSION['loggedIn'] = true;
+
+        $fetchLoggedInUserKoFollowFollowing = "SELECT * from userfollowfollowing WHERE `id`= '".$row['id']."'";
+        $resultOfFetchLoggedInUserKoFollowFollowing = mysqli_query($con, $fetchLoggedInUserKoFollowFollowing);
+        $detailOfLoggedInUserKoFollowFollowing = mysqli_fetch_assoc($resultOfFetchLoggedInUserKoFollowFollowing);
+
+        $loggedInUserKoFollowing= count(unserialize($detailOfLoggedInUserKoFollowFollowing['following']));
+        $loggedInUserKoFollow= count(unserialize($detailOfLoggedInUserKoFollowFollowing['follow']));
+
         $_SESSION['id'] = $row["id"];
         $_SESSION['name'] = $row["name"];
         $_SESSION['username'] = $row["username"];
@@ -26,6 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['userposition'] = $row["userposition"];
         $_SESSION['phone_no'] = $row["phone_no"];
         $_SESSION['securitycode'] = $row["securitycode"];
+        $_SESSION['numberOfFollowing'] = $loggedInUserKoFollowing;
+        $_SESSION['numberOfFollow'] = $loggedInUserKoFollow;
+        
         if ($username == "admin") {
           header("location:admin.php");
           exit();

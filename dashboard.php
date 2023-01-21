@@ -191,11 +191,11 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <hr>
             <div class="followFollowing d-flex">
                 <div class="followers d-flex">
-                    <span>0</span>
+                    <span><?php echo $_SESSION['numberOfFollow'] ?></span>
                     <p>Followers</p>
                 </div>
                 <div class="following d-flex">
-                    <span>0</span>
+                    <span><?php echo $_SESSION['numberOfFollowing'] ?></span>
                     <p>Following</p>
                 </div>
             </div>

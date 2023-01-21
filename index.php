@@ -71,6 +71,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $updateLoggedInUserKoFollowing = "UPDATE `userfollowfollowing` SET `following` = '$serializedLoggedInUserKoFollowing' WHERE `userfollowfollowing`.`id` = '$userid'";
     $resultOfLoggedInUserKoFollowing = mysqli_query($con, $updateLoggedInUserKoFollowing);
 
+    $fetchLoggedInUserKoFollowing = "SELECT * from userfollowfollowing WHERE `id`= '$userid'";
+    $resultOfFetchLoggedInUserKoFollowing = mysqli_query($con, $fetchLoggedInUserKoFollowing);
+    $detailOfLoggedInUserKoFollowing = mysqli_fetch_assoc($resultOfFetchLoggedInUserKoFollowing);
+
+    $_SESSION['numberOfFollowing'] = count(unserialize($detailOfLoggedInUserKoFollowing['following']));
+
     //Updating Other User's Followers List
     $fetchOtherUserKoFollowers = "SELECT * from userfollowfollowing WHERE `id`= '$userKoId'";
     $resultOfFetchOtherUserKoFollowers = mysqli_query($con, $fetchOtherUserKoFollowers);
@@ -103,6 +109,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     $updateLoggedInUserKoFollowing = "UPDATE `userfollowfollowing` SET `following` = '$serializedLoggedInUserKoFollowing' WHERE `userfollowfollowing`.`id` = '$userid'";
     $resultOfLoggedInUserKoFollowing = mysqli_query($con, $updateLoggedInUserKoFollowing);
+
+    $fetchLoggedInUserKoFollowing = "SELECT * from userfollowfollowing WHERE `id`= '$userid'";
+    $resultOfFetchLoggedInUserKoFollowing = mysqli_query($con, $fetchLoggedInUserKoFollowing);
+    $detailOfLoggedInUserKoFollowing = mysqli_fetch_assoc($resultOfFetchLoggedInUserKoFollowing);
+
+    $_SESSION['numberOfFollowing'] = count(unserialize($detailOfLoggedInUserKoFollowing['following']));
 
     //Updating Other User's Followers List
     $fetchOtherUserKoFollowers = "SELECT * from userfollowfollowing WHERE `id`= '$userKoId'";
@@ -152,10 +164,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
           <hr />
           <div class="userfollow d-flex">
             <p>Following</p>
-            <span>10</span>
+            <span><?php echo $_SESSION['numberOfFollowing'] ?></span>
             <br />
             <p>Followers</p>
-            <span>10</span>
+            <span><?php echo $_SESSION['numberOfFollow'] ?></span>
           </div>
         </div>
       </div>
