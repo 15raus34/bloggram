@@ -36,7 +36,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql = "UPDATE `userdetails` SET `userposition` = '$userposition', `phone_no` = '$userphone_no', `securitycode` = '$securityCodeHash' WHERE `userdetails`.`username` = '$username'";
 
         $result = mysqli_query($con, $sql);
-        if ($result) {
+
+        $target_dir = "./img/profilepictures/";
+        $file_extension = pathinfo($_FILES["profilePicture"]["name"], PATHINFO_EXTENSION);
+        $new_file_name = "$username." . $file_extension;
+        $target_file = $target_dir . $new_file_name;
+
+        if ((move_uploaded_file($_FILES["profilePicture"]["tmp_name"], $target_file)) && $result) {
+            $_SESSION['profilePicLocation'] = "./img/profilepictures/$username.jpg";
             header("location:./dashboard.php");
         }
     }
@@ -62,10 +69,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['deleteAccount'])) {
         $id = $_SESSION['id'];
 
+        $fetchUser = "SELECT * FROM `userdetails` WHERE `id` = '$id'";
+        $resultOfFetchUser = mysqli_query($con, $fetchUser);
+        $row = mysqli_fetch_assoc($resultOfFetchUser);
+
+        $username = $row['username'];
+
         $sql = "DELETE FROM `userdetails` WHERE `userdetails`.`id` = '$id'";
         $result = mysqli_query($con, $sql);
-        $sql = "DELETE FROM `userposts` WHERE `userposts`.`id` = '$id'";
+        $sql = "DELETE FROM `userposts` WHERE `userposts`.`username` = '$username'";
         $result = mysqli_query($con, $sql);
+
+        if(file_exists("./img/profilepictures/$username.jpg")){
+            unlink("./img/profilepictures/$username.jpg");
+        }
 
         if ($result) {
             header("location:./partials/logout.php");
@@ -152,6 +169,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $resultOfFetchSpecificPost = mysqli_query($con, $fetchSpecificPost);
             $numOfSpecificPost = mysqli_num_rows($resultOfFetchSpecificPost);
 
+            $userProfilePicLocation = $_SESSION['profilePicLocation'];
+
             if ($numOfSpecificPost > 0) {
                 echo "
                     <h1>Your Post</h1>
@@ -165,7 +184,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
                     echo "<div class='userblog cardup'>
                             <div class='userblog-profile d-flex'>
-                                <img src='./img/" . strtolower($usergender) . ".png' alt='logo' />
+                                <img src='$userProfilePicLocation' alt='logo' />
                                 <div class='userblog-profile-nameposition'>
                                     <h3>$name</h3>
                                     <h5>$userposition</h5>
@@ -197,7 +216,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         </div>
         <div class="dashboard-right cardup">
             <div class="picNamePosition d-flex">
-                <img src=<?php echo "'./img/" . strtolower($usergender) . ".png'" ?> alt="">
+                <img src=<?php echo $_SESSION['profilePicLocation'] ?> alt="">
                 <div class="namePosition">
                     <h2><?php echo $_SESSION['name'] ?></h2>
                     <span><?php echo $_SESSION['userposition'] ?></span>
@@ -215,7 +234,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 </div>
             </div>
             <hr>
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 <div class="otherInfo">
                     <div class="otherInfoContent">
                         <label>USERNAME</label>
@@ -247,6 +266,11 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                                                                                                                                                     echo "disabled";
                                                                                                                                                                 } ?>>
                     </div>
+                    <?php echo !file_exists("./img/profilepictures/$username.jpg")?"<div class='otherInfoContent'>
+                        <label>Upload Profile Picture</label>
+                        <input type='file' name='profilePicture' accept='image/jpeg'>
+                    </div>":"" ?>
+                    
                 </div>
                 <div class="updateDelAcnt d-flex">
                     <?php if (!isset($_SESSION['userposition']) || !isset($_SESSION['phone_no']) || !isset($_SESSION['securitycode'])) {

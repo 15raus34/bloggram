@@ -170,7 +170,7 @@ a {
 
 .adminPanelUserInfo table {
   width: 95%;
-  margin-top: 20px;
+  margin: 20px 0;
   border-collapse: collapse;
   text-align: center;
   font-size: 110%;

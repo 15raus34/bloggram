@@ -19,12 +19,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $login = true;
         $_SESSION['loggedIn'] = true;
 
-        $fetchLoggedInUserKoFollowFollowing = "SELECT * from userfollowfollowing WHERE `id`= '".$row['id']."'";
+        $fetchLoggedInUserKoFollowFollowing = "SELECT * from userfollowfollowing WHERE `id`= '" . $row['id'] . "'";
         $resultOfFetchLoggedInUserKoFollowFollowing = mysqli_query($con, $fetchLoggedInUserKoFollowFollowing);
         $detailOfLoggedInUserKoFollowFollowing = mysqli_fetch_assoc($resultOfFetchLoggedInUserKoFollowFollowing);
 
-        $loggedInUserKoFollowing= count(unserialize($detailOfLoggedInUserKoFollowFollowing['following']));
-        $loggedInUserKoFollow= count(unserialize($detailOfLoggedInUserKoFollowFollowing['follow']));
+        $loggedInUserKoFollowing = count(unserialize($detailOfLoggedInUserKoFollowFollowing['following']));
+        $loggedInUserKoFollow = count(unserialize($detailOfLoggedInUserKoFollowFollowing['follow']));
 
         $_SESSION['id'] = $row["id"];
         $_SESSION['name'] = $row["name"];
@@ -36,7 +36,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['securitycode'] = $row["securitycode"];
         $_SESSION['numberOfFollowing'] = $loggedInUserKoFollowing;
         $_SESSION['numberOfFollow'] = $loggedInUserKoFollow;
-        
+
+
+        $usergenderforpp = strtolower($_SESSION['usergender']);
+        if ($username != "admin") {
+          $_SESSION['profilePicLocation'] =  file_exists("./img/profilepictures/$username.jpg") ? "./img/profilepictures/$username.jpg" : "./img/$usergenderforpp.png";
+        } else {
+          $_SESSION['profilePicLocation'] = "./img/logo.png";
+        }
+
+
         if ($username == "admin") {
           header("location:admin.php");
           exit();

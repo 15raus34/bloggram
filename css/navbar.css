@@ -8,11 +8,14 @@
   justify-content: center;
 }
 nav {
+  position: sticky;
+  top: 0;
   height: 8vh;
   background: var(--theme-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  z-index: 100;
 }
 nav > div {
   margin: 0 50px;

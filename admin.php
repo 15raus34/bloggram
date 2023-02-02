@@ -43,6 +43,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("location:./admin.php");
         }
     }
+
+    //To Add Do You Know
+    if (isset($_POST['addDoYouKnow'])) {
+        $doYouKnow = $_POST['doYouKnow'];
+
+        $sql = "INSERT INTO `doyouknow` (`description`, `timestamp`) VALUES ('$doYouKnow', current_timestamp());";
+        $result = mysqli_query($con, $sql);
+
+        if ($result) {
+            header("location:./admin.php");
+        }
+    }
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
@@ -90,6 +102,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $result = mysqli_query($con, $sql);
         $sql = "DELETE FROM `userposts` WHERE `userposts`.`username` = '$username'";
         $result = mysqli_query($con, $sql);
+
+        if(file_exists("./img/profilepictures/$username.jpg")){
+            unlink("./img/profilepictures/$username.jpg");
+        }
 
         if ($result) {
             header("location:./admin.php");
@@ -157,7 +173,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
                     echo "<div class='userblog cardup'>
                             <div class='userblog-profile d-flex'>
-                                <img src='./img/" . strtolower($usergender) . ".png' alt='logo' />
+                                <img src='./img/logo.png' alt='logo' />
                                 <div class='userblog-profile-nameposition'>
                                     <h3>$name</h3>
                                     <h5>$userposition</h5>
@@ -173,10 +189,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                             <div class='userblog-interaction d-flex'>
                                 <span class='noOfLikes'>Likes: $specificPostKoLikes</span>
                                 <form method='GET'>
-                                    <a class='btn userinteract-btn' href='dashboard.php?updatePostID=$specificPostKoID' class='btn userinteract-btn' name='editOwnPost'>
+                                    <a class='btn userinteract-btn' href='admin.php?updatePostID=$specificPostKoID' class='btn userinteract-btn' name='editOwnPost'>
                                     <i class='fa-solid fa-pen-to-square'></i>Edit
                                     </a>
-                                    <a class='btn userinteract-btn' href='dashboard.php?deletePostID=$specificPostKoID' class='btn userinteract-btn' name='deleteOwnPost'>
+                                    <a class='btn userinteract-btn' href='admin.php?deletePostID=$specificPostKoID' class='btn userinteract-btn' name='deleteOwnPost'>
                                     <i class='fa-solid fa-trash'></i>Delete
                                     </a>
                                     </form>
@@ -255,9 +271,20 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     </table>
                 </div>
             </form>
+            <hr>
+            <form method="POST">
+                <div class="addUpdateFormContent">
+                    <label for="description">Do You Know:</label>
+                    <textarea type="text" name="doYouKnow" rows="5" placeholder="DO YOU KNOW....."></textarea>
+                </div>
+                <div class="addUpdateFormContent">
+                    <button type='submit' name='addDoYouKnow'>Submit</button>
+                </div>
+            </form>
         </div>
     </section>
     <script src="https://kit.fontawesome.com/4187f8db55.js" crossorigin="anonymous"></script>
 </body>
 
 </html>
+

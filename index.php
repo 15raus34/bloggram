@@ -155,7 +155,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     <div class="sub-interface sub-interface-userdetail">
       <div class="upper-brief-detail cardup">
         <div class="col-color"></div>
-        <img src="./img/<?php echo strtolower($usergender) ?>.png" alt="logo" />
+        <img src="<?php echo $_SESSION['profilePicLocation'] ?>" alt="logo" />
         <div class="userdetails d-flex">
           <div class="name-profession d-flex">
             <h2><?php echo $name ?></h2>
@@ -182,11 +182,18 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
           <div class='suggest-user'>";
           while ($detailOfFetchUserSuggesion = mysqli_fetch_assoc($resultOfFetchUserSuggesion)) {
             $specificSuggestUserName = $detailOfFetchUserSuggesion['name'];
+            $specificSuggestUserUserName = $detailOfFetchUserSuggesion['username'];
             $specificSuggestUserPosition = $detailOfFetchUserSuggesion['userposition'];
-            $specificSuggestUserGender = $detailOfFetchUserSuggesion['usergender'];
+            $specificSuggestUserGender = strtolower($detailOfFetchUserSuggesion['usergender']);
+
+            if ($specificSuggestUserUserName != "admin") {
+              $specificSuggestUserProfilePicLocation =  file_exists("./img/profilepictures/$specificSuggestUserUserName.jpg") ? "./img/profilepictures/$specificSuggestUserUserName.jpg" : "./img/$specificSuggestUserGender.png";
+            } else {
+              $specificSuggestUserProfilePicLocation = "./img/logo.png";
+            }
 
             echo "<div class='suggest-user-1 d-flex'>
-                  <img src='./img/" . strtolower($specificSuggestUserGender) . ".png' alt='suser' />
+                  <img src='$specificSuggestUserProfilePicLocation' alt='suser' />
                   <div class='minidetail'>
                   <a href='#'>$specificSuggestUserName</a>
                   <p>$specificSuggestUserPosition</p>
@@ -227,14 +234,21 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
           $SpecificUserID = $detailOfSpecificUser["id"];
           $SpecificUserName = $detailOfSpecificUser["name"];
+          $SpecificUserUserName = $detailOfSpecificUser["username"];
           $SpecificUserPosition = $detailOfSpecificUser["userposition"];
-          $SpecificUserGender = $detailOfSpecificUser["usergender"];
+          $SpecificUserGender = strtolower($detailOfSpecificUser["usergender"]);
 
           $amIFollowing = in_array($SpecificUserID, $iAmFollowing);
 
+          if ($SpecificUserUserName != "admin") {
+            $specificUserProfilePicLocation =  file_exists("./img/profilepictures/$SpecificUserUserName.jpg") ? "./img/profilepictures/$SpecificUserUserName.jpg" : "./img/$SpecificUserGender.png";
+          } else {
+            $specificUserProfilePicLocation = "./img/logo.png";
+          }
+
           echo "<div class='userblog cardup' id='post" . $id . "'>
             <div class='userblog-profile d-flex'>
-              <img src='./img/" . strtolower($SpecificUserGender) . ".png' alt='logo' />
+              <img src='$specificUserProfilePicLocation' alt='logo' />
               <div class='userblog-profile-nameposition'>
                 <h3>$SpecificUserName</h3>
                 <h5>$SpecificUserPosition</h5>
@@ -277,33 +291,24 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         </div>
         <hr />
         <div class="signupnow d-flex">
-          <a href="<?php echo ($_SESSION['username']=="admin")?"admin.php":"dashboard.php"?>"> <button class="btn userinteract-btn">Dashboard</button></a>
+          <a href="<?php echo ($_SESSION['username'] == "admin") ? "admin.php" : "dashboard.php" ?>"> <button class="btn userinteract-btn">Dashboard</button></a>
         </div>
       </div>
       <div class="news-lower cardup">
         <h3>Do You Know?</h3>
         <hr />
         <div class="news-lower-list">
-          <div class="newscard">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo
-            ipsa mollitia eius modi minima magni?
-          </div>
-          <div class="newscard">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo
-            ipsa mollitia eius modi minima magni?
-          </div>
-          <div class="newscard">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo
-            ipsa mollitia eius
-          </div>
-          <div class="newscard">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo
-            ipsa mollitia eius modi minima magni?
-          </div>
-          <div class="newscard">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo
-            ipsa mollitia eius modi minima magni?
-          </div>
+
+          <?php
+          $fetchDoYouKnow = "SELECT * FROM `doyouknow`";
+          $resultOfFetchDoYouKnow = mysqli_query($con, $fetchDoYouKnow);
+          if (mysqli_num_rows($resultOfFetchDoYouKnow) > 0) {
+            while ($row = mysqli_fetch_assoc($resultOfFetchDoYouKnow)) {
+              $description = $row['description'];
+              echo "<div class='newscard'>$description</div>";
+            }
+          }
+          ?>
         </div>
       </div>
     </div>
