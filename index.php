@@ -172,20 +172,20 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         </div>
       </div>
       <div class="lower-suggestion cardup">
-        <h3>Suggestions</h3>
-        <div class="suggest-user">
-          <?php
-          $fetchUserSuggesion = "SELECT * from userdetails WHERE `username`!= '$username'";
-          $resultOfFetchUserSuggesion = mysqli_query($con, $fetchUserSuggesion);
-          $numOfFetchUserSuggesion = mysqli_num_rows($resultOfFetchUserSuggesion);
+        <?php
+        $fetchUserSuggesion = "SELECT * from userdetails WHERE `username`!= '$username'";
+        $resultOfFetchUserSuggesion = mysqli_query($con, $fetchUserSuggesion);
+        $numOfFetchUserSuggesion = mysqli_num_rows($resultOfFetchUserSuggesion);
 
-          if ($numOfFetchUserSuggesion > 0) {
-            while ($detailOfFetchUserSuggesion = mysqli_fetch_assoc($resultOfFetchUserSuggesion)) {
-              $specificSuggestUserName = $detailOfFetchUserSuggesion['name'];
-              $specificSuggestUserPosition = $detailOfFetchUserSuggesion['userposition'];
-              $specificSuggestUserGender = $detailOfFetchUserSuggesion['usergender'];
+        if ($numOfFetchUserSuggesion > 0) {
+          echo "<h3>Suggestions</h3>
+          <div class='suggest-user'>";
+          while ($detailOfFetchUserSuggesion = mysqli_fetch_assoc($resultOfFetchUserSuggesion)) {
+            $specificSuggestUserName = $detailOfFetchUserSuggesion['name'];
+            $specificSuggestUserPosition = $detailOfFetchUserSuggesion['userposition'];
+            $specificSuggestUserGender = $detailOfFetchUserSuggesion['usergender'];
 
-              echo "<div class='suggest-user-1 d-flex'>
+            echo "<div class='suggest-user-1 d-flex'>
                   <img src='./img/" . strtolower($specificSuggestUserGender) . ".png' alt='suser' />
                   <div class='minidetail'>
                   <a href='#'>$specificSuggestUserName</a>
@@ -193,12 +193,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 </div>
               </div>
               <hr />";
-            }
           }
+        }
 
-          ?>
-        </div>
+        ?>
       </div>
+    </div>
     </div>
     <!-- ----------------------------------------------------------------- -->
     <div class="sub-interface sub-interface-blog">
@@ -277,7 +277,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         </div>
         <hr />
         <div class="signupnow d-flex">
-          <a href="dashboard.php"><button class="btn userinteract-btn">Dashboard</button></a>
+          <a href="<?php echo ($_SESSION['username']=="admin")?"admin.php":"dashboard.php"?>"> <button class="btn userinteract-btn">Dashboard</button></a>
         </div>
       </div>
       <div class="news-lower cardup">

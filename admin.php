@@ -4,6 +4,7 @@ session_start();
 if (!$_SESSION['loggedIn']) {
     header("location:./login.php");
 }
+
 include './partials/dbconnect.php';
 $name = $_SESSION['name'];
 $userposition = $_SESSION['userposition'];
@@ -22,22 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $result = mysqli_query($con, $sql);
         if ($result) {
-            header("location:./dashboard.php");
-        }
-    }
-    //To Update The User's Position, Phone Number & Security Code
-    if (isset($_POST['updateUserDetail'])) {
-        $_SESSION['userposition'] = $userposition = $_POST['position'];
-        $_SESSION['phone_no'] = $userphone_no = $_POST['phno'];
-        $_SESSION['securitycode'] = $userSecurityCode = $_POST['securitycode'];
-
-        $securityCodeHash = password_hash($userSecurityCode, PASSWORD_DEFAULT);
-
-        $sql = "UPDATE `userdetails` SET `userposition` = '$userposition', `phone_no` = '$userphone_no', `securitycode` = '$securityCodeHash' WHERE `userdetails`.`username` = '$username'";
-
-        $result = mysqli_query($con, $sql);
-        if ($result) {
-            header("location:./dashboard.php");
+            header("location:./admin.php");
         }
     }
 
@@ -54,21 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             unset($_SESSION['updatingPostId']);
             unset($_SESSION['title']);
             unset($_SESSION['description']);
-            header("location:./dashboard.php");
-        }
-    }
-
-    //To Delete The User From Database
-    if (isset($_POST['deleteAccount'])) {
-        $id = $_SESSION['id'];
-
-        $sql = "DELETE FROM `userdetails` WHERE `userdetails`.`id` = '$id'";
-        $result = mysqli_query($con, $sql);
-        $sql = "DELETE FROM `userposts` WHERE `userposts`.`id` = '$id'";
-        $result = mysqli_query($con, $sql);
-
-        if ($result) {
-            header("location:./partials/logout.php");
+            header("location:./admin.php");
         }
     }
 }
@@ -100,7 +72,27 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $sql = "ALTER TABLE userposts AUTO_INCREMENT = 1";
             mysqli_query($con, $sql);
 
-            header("location:./dashboard.php");
+            header("location:./admin.php");
+        }
+    }
+
+    //To Delete The User From Database By Admin
+    if (isset($_GET['deleteUserID'])) {
+        $id = $_GET['deleteUserID'];
+
+        $fetchUser = "SELECT * FROM `userdetails` WHERE `id` = '$id'";
+        $resultOfFetchUser = mysqli_query($con, $fetchUser);
+        $row = mysqli_fetch_assoc($resultOfFetchUser);
+
+        $username = $row['username'];
+
+        $sql = "DELETE FROM `userdetails` WHERE `userdetails`.`id` = '$id'";
+        $result = mysqli_query($con, $sql);
+        $sql = "DELETE FROM `userposts` WHERE `userposts`.`username` = '$username'";
+        $result = mysqli_query($con, $sql);
+
+        if ($result) {
+            header("location:./admin.php");
         }
     }
 }
@@ -181,10 +173,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                             <div class='userblog-interaction d-flex'>
                                 <span class='noOfLikes'>Likes: $specificPostKoLikes</span>
                                 <form method='GET'>
-                                    <a class='btn userinteract-btn' href='dashboard.php?updatePostID=$specificPostKoID' name='editOwnPost'>
+                                    <a class='btn userinteract-btn' href='dashboard.php?updatePostID=$specificPostKoID' class='btn userinteract-btn' name='editOwnPost'>
                                     <i class='fa-solid fa-pen-to-square'></i>Edit
                                     </a>
-                                    <a class='btn userinteract-btn' href='dashboard.php?deletePostID=$specificPostKoID'  name='deleteOwnPost'>
+                                    <a class='btn userinteract-btn' href='dashboard.php?deletePostID=$specificPostKoID' class='btn userinteract-btn' name='deleteOwnPost'>
                                     <i class='fa-solid fa-trash'></i>Delete
                                     </a>
                                     </form>
@@ -197,63 +189,70 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         </div>
         <div class="dashboard-right cardup">
             <div class="picNamePosition d-flex">
-                <img src=<?php echo "'./img/" . strtolower($usergender) . ".png'" ?> alt="">
+                <img src="./img/logo.png" alt="">
                 <div class="namePosition">
-                    <h2><?php echo $_SESSION['name'] ?></h2>
-                    <span><?php echo $_SESSION['userposition'] ?></span>
+                    <h2>BLOGGRAM ADMIN</h2>
+                    <span>developer | admin</span>
                 </div>
             </div>
             <hr>
             <div class="followFollowing d-flex">
+                <?php
+                $fetchNumberOfUsers = "SELECT * from userdetails";
+                $resultOfFetchNumberOfUsers = mysqli_query($con, $fetchNumberOfUsers);
+                $_SESSION['numOfUsers'] = mysqli_num_rows($resultOfFetchNumberOfUsers) - 1;
+                ?>
                 <div class="followers d-flex">
-                    <span><?php echo $_SESSION['numberOfFollow'] ?></span>
-                    <p>Followers</p>
+                    <span><?php echo $_SESSION['numOfUsers'] ?></span>
+                    <p>Users</p>
                 </div>
+                <?php
+                $fetchNumberOfPosts = "SELECT * from userposts";
+                $resultOfFetchNumberOfPosts = mysqli_query($con, $fetchNumberOfPosts);
+                $_SESSION['numOfPosts'] = mysqli_num_rows($resultOfFetchNumberOfPosts);
+                ?>
                 <div class="following d-flex">
-                    <span><?php echo $_SESSION['numberOfFollowing'] ?></span>
-                    <p>Following</p>
+                    <span><?php echo $_SESSION['numOfPosts'] ?></span>
+                    <p>Posts</p>
                 </div>
             </div>
             <hr>
-            <form method="POST">
-                <div class="otherInfo">
-                    <div class="otherInfoContent">
-                        <label>USERNAME</label>
-                        <input value="<?php echo $_SESSION['username'] ?>" disabled>
-                    </div>
-                    <div class="otherInfoContent">
-                        <label>EMAIL</label>
-                        <input type="email" value="<?php echo $_SESSION['useremail'] ?>" disabled>
-                    </div>
-                    <div class="otherInfoContent">
-                        <label>GENDER</label>
-                        <input type="text" placeholder="ENTER YOUR GENDER" value="<?php echo ucfirst($_SESSION['usergender']) ?>" disabled>
-                    </div>
-                    <div class="otherInfoContent">
-                        <label>POSITION</label>
-                        <input type="text" name="position" placeholder="ex designer,editor" value="<?php echo $_SESSION['userposition'] ?>" <?php if ($_SESSION['userposition'] != "Bloggram User") {
-                                                                                                                                                echo "disabled";
-                                                                                                                                            } ?>>
-                    </div>
-                    <div class="otherInfoContent">
-                        <label>PHONE NUMBER</label>
-                        <input type="text" name="phno" placeholder="UPDATE YOUR NUMBER" value="<?php echo $_SESSION['phone_no'] ?>" <?php if (isset($_SESSION['phone_no'])) {
-                                                                                                                                        echo "disabled";
-                                                                                                                                    } ?>>
-                    </div>
-                    <div class="otherInfoContent">
-                        <label>SECURITY CODE</label>
-                        <input type="text" name="securitycode" placeholder="UPDATE SECURITY CODE FOR RECOVERY" value="<?php echo $_SESSION['securitycode'] ?>" <?php if (isset($_SESSION['securitycode'])) {
-                                                                                                                                                                    echo "disabled";
-                                                                                                                                                                } ?>>
-                    </div>
-                </div>
-                <div class="updateDelAcnt d-flex">
-                    <?php if (!isset($_SESSION['userposition']) || !isset($_SESSION['phone_no']) || !isset($_SESSION['securitycode'])) {
-                        echo "<button type='submit' name='updateUserDetail'>Save</button>";
+            <form method="GET">
+                <div class="otherInfo adminPanelUserInfo">
+                    <?php
+                    $fetchNumberOfUsers = "SELECT * from userdetails LIMIT 1,18446744073709551615";
+                    $resultOfFetchNumberOfUsers = mysqli_query($con, $fetchNumberOfUsers);
+                    $i = 0;
+                    if (mysqli_num_rows($resultOfFetchNumberOfUsers) > 0) {
+                        echo "<table border='1'>
+                        <tr>
+                            <th>S.No.</th>
+                            <th>Users</th>
+                            <th>Username</th>
+                            <th>Contact No</th>
+                            <th>Posts</th>
+                            <th>Delete</th>
+                        </tr>";
+
+                        while ($row = mysqli_fetch_assoc($resultOfFetchNumberOfUsers)) {
+                            $username = $row['username'];
+                            $fetchUser = "SELECT * FROM `userposts` WHERE `username` = '$username'";
+                            $resultOfFetchUser = mysqli_query($con, $fetchUser);
+                            $numOfPosts = mysqli_num_rows($resultOfFetchUser);
+                            echo "<tr>
+                                <td>" . (++$i) . "</td>
+                                <td>" . $row['name'] . "</td>
+                                <td>" . $username . "</td>
+                                <td>" . $row['phone_no'] . "</td>
+                                <td>" . $numOfPosts . "</td>
+                                <td><a class='adminPanelDel' href='admin.php?deleteUserID=" . $row['id'] . "' name='deleteOwnPost'>
+                                        <i class='fa-solid fa-trash'></i>
+                                    </a></td>
+                            </tr>";
+                        }
                     }
                     ?>
-                    <button type="delete" name="deleteAccount">Delete Account</button>
+                    </table>
                 </div>
             </form>
         </div>
