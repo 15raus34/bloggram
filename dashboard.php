@@ -4,6 +4,10 @@ session_start();
 if (!$_SESSION['loggedIn']) {
     header("location:./login.php");
 }
+$added = false;
+$updatedDetail = false;
+$edited = false;
+$deleted = false;
 include './partials/dbconnect.php';
 $name = $_SESSION['name'];
 $userposition = $_SESSION['userposition'];
@@ -22,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $result = mysqli_query($con, $sql);
         if ($result) {
-            header("location:./dashboard.php");
+            $added = true;
         }
     }
     //To Update The User's Position, Phone Number & Security Code
@@ -43,6 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $target_file = $target_dir . $new_file_name;
 
         if ((move_uploaded_file($_FILES["profilePicture"]["tmp_name"], $target_file)) && $result) {
+            $updatedDetail = true;
             $_SESSION['profilePicLocation'] = "./img/profilepictures/$username.jpg";
             header("location:./dashboard.php");
         }
@@ -58,6 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = mysqli_query($con, $sql);
 
         if ($result) {
+            $edited = true;
             unset($_SESSION['updatingPostId']);
             unset($_SESSION['title']);
             unset($_SESSION['description']);
@@ -66,7 +72,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     //To Delete The User From Database
-    if (isset($_POST['deleteAccount'])) {
+    if(isset($_POST['deleteAccount'])){
+        $_SESSION['deleteConfirm?'] = "YES";
+    }
+
+    if (isset($_POST['confirmDeleteAccount']) && ($_SESSION['deleteConfirm?']=="YES")) {
         $id = $_SESSION['id'];
 
         $fetchUser = "SELECT * FROM `userdetails` WHERE `id` = '$id'";
@@ -80,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql = "DELETE FROM `userposts` WHERE `userposts`.`username` = '$username'";
         $result = mysqli_query($con, $sql);
 
-        if(file_exists("./img/profilepictures/$username.jpg")){
+        if (file_exists("./img/profilepictures/$username.jpg")) {
             unlink("./img/profilepictures/$username.jpg");
         }
 
@@ -102,9 +112,14 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $_SESSION['description'] = $row['description'];
     }
 
-    //To Delete The Existing Post 
-    if (isset($_GET['deletePostID'])) {
-        $deletingPostId = $_GET['deletePostID'];
+    //To Delete The Existing Post
+    if (isset($_GET['deletePostID'])){
+        $_SESSION['confirmDeletePostID']="YES".$_GET['deletePostID'];
+        echo "<script>location.hash = '#post" . $_GET['deletePostID'] . "';</script>";
+    }
+    
+    if (isset($_GET['confirmDeletePostID']) && $_SESSION['confirmDeletePostID']==("YES".$_GET['confirmDeletePostID'])) {
+        $deletingPostId = $_GET['confirmDeletePostID'];
         $deletingPost = "DELETE FROM `userposts` WHERE `id` = '$deletingPostId'";
         $resultOfDeletingPost = mysqli_query($con, $deletingPost);
         if ($resultOfDeletingPost) {
@@ -116,8 +131,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             mysqli_query($con, $sql);
             $sql = "ALTER TABLE userposts AUTO_INCREMENT = 1";
             mysqli_query($con, $sql);
-
-            header("location:./dashboard.php");
+            $deleted = true;
         }
     }
 }
@@ -132,6 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link rel="stylesheet" href="css/utils.css">
     <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/maininterface.css">
@@ -170,7 +185,27 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $numOfSpecificPost = mysqli_num_rows($resultOfFetchSpecificPost);
 
             $userProfilePicLocation = $_SESSION['profilePicLocation'];
-
+            if ($deleted) {
+                echo
+                "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+                <strong>Deleted</strong> Post had been deleted.
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+              </div>";
+            }
+            if ($edited) {
+                echo
+                "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+                <strong>Edited</strong> Successfully.
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+              </div>";
+            }
+            if ($added) {
+                echo
+                "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+                <strong>Added</strong> New Post Is Up.
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+              </div>";
+            }
             if ($numOfSpecificPost > 0) {
                 echo "
                     <h1>Your Post</h1>
@@ -182,7 +217,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
                     $specificPostKoLikes = count(unserialize($row['likes']));
 
-                    echo "<div class='userblog cardup'>
+                    echo "<div class='userblog cardup' id='post" . $specificPostKoID . "'>
                             <div class='userblog-profile d-flex'>
                                 <img src='$userProfilePicLocation' alt='logo' />
                                 <div class='userblog-profile-nameposition'>
@@ -202,11 +237,19 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                 <form method='GET'>
                                     <a class='btn userinteract-btn' href='dashboard.php?updatePostID=$specificPostKoID' name='editOwnPost'>
                                     <i class='fa-solid fa-pen-to-square'></i>Edit
-                                    </a>
-                                    <a class='btn userinteract-btn' href='dashboard.php?deletePostID=$specificPostKoID'  name='deleteOwnPost'>
-                                    <i class='fa-solid fa-trash'></i>Delete
-                                    </a>
-                                    </form>
+                                    </a>";
+
+                                    if(isset($_GET['deletePostID']) && $_SESSION['confirmDeletePostID']==("YES".$specificPostKoID)){
+                                        echo "<a class='btn userinteract-btn' href='dashboard.php?confirmDeletePostID=$specificPostKoID'  name='deleteOwnPost'>
+                                        <i class='fa-solid fa-trash'></i>Confirm?
+                                        </a>";
+                                    }
+                                    else{
+                                        echo "<a class='btn userinteract-btn' href='dashboard.php?deletePostID=$specificPostKoID'  name='deleteOwnPost'>
+                                        <i class='fa-solid fa-trash'></i>Delete
+                                        </a>";
+                                    }
+                                    echo "</form>
                             </div>
                         </div>";
                 }
@@ -218,7 +261,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <div class="picNamePosition d-flex">
                 <img src=<?php echo $_SESSION['profilePicLocation'] ?> alt="">
                 <div class="namePosition">
-                    <h2><?php echo $_SESSION['name'] ?></h2>
+                    <h2><?php echo strtoupper($_SESSION['name']) ?></h2>
                     <span><?php echo $_SESSION['userposition'] ?></span>
                 </div>
             </div>
@@ -234,7 +277,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 </div>
             </div>
             <hr>
-            <form method="POST" enctype="multipart/form-data">
+            <form id="form" method="POST" enctype="multipart/form-data">
                 <div class="otherInfo">
                     <div class="otherInfoContent">
                         <label>USERNAME</label>
@@ -266,23 +309,31 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                                                                                                                                                     echo "disabled";
                                                                                                                                                                 } ?>>
                     </div>
-                    <?php echo !file_exists("./img/profilepictures/$username.jpg")?"<div class='otherInfoContent'>
+                    <?php echo !file_exists("./img/profilepictures/$username.jpg") ? "<div class='otherInfoContent'>
                         <label>Upload Profile Picture</label>
                         <input type='file' name='profilePicture' accept='image/jpeg'>
-                    </div>":"" ?>
-                    
+                    </div>" : "" ?>
+
                 </div>
                 <div class="updateDelAcnt d-flex">
                     <?php if (!isset($_SESSION['userposition']) || !isset($_SESSION['phone_no']) || !isset($_SESSION['securitycode'])) {
                         echo "<button type='submit' name='updateUserDetail'>Save</button>";
                     }
                     ?>
-                    <button type="delete" name="deleteAccount">Delete Account</button>
+                    <?php
+                    if (isset($_POST['deleteAccount'])) {
+                        echo "<button type='delete' name='confirmDeleteAccount'>Confirm?</button>";
+                    } else {
+                        echo "<button type='delete' name='deleteAccount'>Delete Account</button>";
+                    }
+                    ?>
                 </div>
             </form>
         </div>
     </section>
     <script src="https://kit.fontawesome.com/4187f8db55.js" crossorigin="anonymous"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </body>
 
 </html>

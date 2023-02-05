@@ -4,6 +4,6 @@
 🔭This Project is Based on PHP Application <br>
 
 ## ❗❕ To Do:
-* Alerts
-* Confirmation Before Deletion
+* Other Users Profile Dashboard [VIEW MODE]
+
   

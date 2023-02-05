@@ -262,13 +262,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <hr />
             <form>
               <div class='userblog-interaction d-flex'>";
-          echo (!$didILike) ? "
+              echo (!$didILike) ? "
                 <a href='http://localhost/blogphp/index.php?likePostID=$id' class='btn userinteract-btn' id='like'>
                   <i class='fa-sharp fa-solid fa-heart'></i>Like &nbsp;<span>$likes</span>
                 </a>" : "<a href='http://localhost/blogphp/index.php?disLikePostID=$id' class='btn userinteract-btn' id='disLike'>
                 <i class='fa-sharp fa-solid fa-heart'></i>Liked &nbsp;<span>$likes</span>
               </a>";
-          echo (!$amIFollowing) ? "
+              echo (!$amIFollowing) ? "
                 <a href='http://localhost/blogphp/index.php?followUserID=$SpecificUserID&postID=$id' class='btn userinteract-btn' id='follow'>
                   <i class='fa-solid fa-cloud-bolt'></i>Follow
                 </a>" : "<a href='http://localhost/blogphp/index.php?unFollowUserID=$SpecificUserID' class='btn userinteract-btn' id='follow'>
@@ -294,23 +294,23 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
           <a href="<?php echo ($_SESSION['username'] == "admin") ? "admin.php" : "dashboard.php" ?>"> <button class="btn userinteract-btn">Dashboard</button></a>
         </div>
       </div>
-      <div class="news-lower cardup">
-        <h3>Do You Know?</h3>
-        <hr />
-        <div class="news-lower-list">
+      <div class='news-lower cardup'>
+        <?php
+        $fetchDoYouKnow = "SELECT * FROM `doyouknow`";
+        $resultOfFetchDoYouKnow = mysqli_query($con, $fetchDoYouKnow);
+        if (mysqli_num_rows($resultOfFetchDoYouKnow) > 0) {
+          echo "<h3>Do You Know?</h3>
+          <hr />
+          <div class='news-lower-list'>";
 
-          <?php
-          $fetchDoYouKnow = "SELECT * FROM `doyouknow`";
-          $resultOfFetchDoYouKnow = mysqli_query($con, $fetchDoYouKnow);
-          if (mysqli_num_rows($resultOfFetchDoYouKnow) > 0) {
-            while ($row = mysqli_fetch_assoc($resultOfFetchDoYouKnow)) {
-              $description = $row['description'];
-              echo "<div class='newscard'>$description</div>";
-            }
+          while ($row = mysqli_fetch_assoc($resultOfFetchDoYouKnow)) {
+            $description = $row['description'];
+            echo "<div class='newscard'>$description</div>";
           }
-          ?>
-        </div>
+        }
+        ?>
       </div>
+    </div>
     </div>
   </section>
   <script src="https://kit.fontawesome.com/4187f8db55.js" crossorigin="anonymous"></script>

@@ -4,6 +4,10 @@ session_start();
 if (!$_SESSION['loggedIn']) {
     header("location:./login.php");
 }
+$added = false;
+$updatedDetail = false;
+$edited = false;
+$deleted = false;
 
 include './partials/dbconnect.php';
 $name = $_SESSION['name'];
@@ -23,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $result = mysqli_query($con, $sql);
         if ($result) {
-            header("location:./admin.php");
+            $added = true;
         }
     }
 
@@ -84,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $sql = "ALTER TABLE userposts AUTO_INCREMENT = 1";
             mysqli_query($con, $sql);
 
-            header("location:./admin.php");
+            $deleted = true;
         }
     }
 
@@ -103,7 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $sql = "DELETE FROM `userposts` WHERE `userposts`.`username` = '$username'";
         $result = mysqli_query($con, $sql);
 
-        if(file_exists("./img/profilepictures/$username.jpg")){
+        if (file_exists("./img/profilepictures/$username.jpg")) {
             unlink("./img/profilepictures/$username.jpg");
         }
 
@@ -123,6 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link rel="stylesheet" href="css/utils.css">
     <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/maininterface.css">
@@ -160,6 +165,27 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $resultOfFetchSpecificPost = mysqli_query($con, $fetchSpecificPost);
             $numOfSpecificPost = mysqli_num_rows($resultOfFetchSpecificPost);
 
+            if ($deleted) {
+                echo
+                "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+                <strong>Deleted</strong> Post had been deleted.
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+              </div>";
+            }
+            if ($edited) {
+                echo
+                "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+                <strong>Edited</strong> Successfully.
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+              </div>";
+            }
+            if ($added) {
+                echo
+                "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+                <strong>Added</strong> New Post Is Up.
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+              </div>";
+            }
             if ($numOfSpecificPost > 0) {
                 echo "
                     <h1>Your Post</h1>
@@ -284,7 +310,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         </div>
     </section>
     <script src="https://kit.fontawesome.com/4187f8db55.js" crossorigin="anonymous"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </body>
 
 </html>
-

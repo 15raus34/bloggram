@@ -70,16 +70,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LogIn</title>
 
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
   <link rel="stylesheet" href="css/utils.css" />
   <link rel="stylesheet" href="css/signup-login.css" />
 </head>
 
 <body>
+
   <section class="container d-flex">
     <div class="welcome-card">
       <img src="./img/logo.png" alt="" />
     </div>
+
     <div class="form-card cardup">
+      <?php
+      if (!$login) {
+        echo
+        "<div class='alert alert-danger' role='alert'>
+        <strong>Please</strong> Enter Correct Credentials.
+      </div>";
+      }
+      ?>
       <form action="#" method="post">
         <div class="formcontent">
           <label>Username</label>
@@ -99,6 +110,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </form>
     </div>
   </section>
+
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</body>
+
+</html>
 </body>
 
 </html>
