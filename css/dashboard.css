@@ -179,6 +179,7 @@ a {
 }
 th,
 td {
+  border: 3px solid black;
   width: auto;
   padding: 3px 10px;
 }

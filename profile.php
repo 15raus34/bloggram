@@ -4,19 +4,18 @@ session_start();
 if (!$_SESSION['loggedIn']) {
   header("location:./login.php");
 }
+
 include './partials/dbconnect.php';
+
 $userid = $_SESSION['id'];
-$name = $_SESSION['name'];
 $username = $_SESSION['username'];
-$userposition = $_SESSION['userposition'];
-$usergender = $_SESSION['usergender'];
+$usergender = strtolower($_SESSION['usergender']);
 
-if (isset($_SESSION['tempID'])) {
-  echo "<script>location.hash = '#" . $_SESSION['tempID'] . "';</script>";
-  unset($_SESSION['tempID']);
+if (!isset($_SESSION['profileId'])) {
+  $_SESSION['profileId'] = $_GET['profileId'];
 }
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
   //To Like The Post via GET Request [INTERACTION]
   if (isset($_GET['likePostID'])) {
     $likePostKoId = $_GET['likePostID'];
@@ -32,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfUpdateLikeInPost = mysqli_query($con, $updateLikeInPost);
     if ($resultOfUpdateLikeInPost) {
       $_SESSION['tempID'] = "post" . $likePostKoId;
-      header("location:http://localhost/blogphp/index.php");
+      header("location:http://localhost/blogphp/profile.php?profileId=" . $_SESSION['profileId']);
     }
   }
 
@@ -51,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfUpdateDisLikeInPost = mysqli_query($con, $updateDisLikeInPost);
     if ($resultOfUpdateDisLikeInPost) {
       $_SESSION['tempID'] = "post" . $disLikePostKoId;
-      header("location:http://localhost/blogphp/index.php");
+      header("location:http://localhost/blogphp/profile.php?profileId=" . $_SESSION['profileId']);
     }
   }
 
@@ -90,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfOtherUserKoFollowers = mysqli_query($con, $updateOtherUserKoFollowers);
     if ($resultOfLoggedInUserKoFollowing && $resultOfOtherUserKoFollowers) {
       $_SESSION['tempID'] = "post" . $_GET['postID'];
-      header("location:http://localhost/blogphp/index.php");
+      header("location:http://localhost/blogphp/profile.php?profileId=" . $_SESSION['profileId']);
     }
   }
 
@@ -129,10 +128,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfOtherUserKoFollowers = mysqli_query($con, $updateOtherUserKoFollowers);
     if ($resultOfLoggedInUserKoFollowing && $resultOfOtherUserKoFollowers) {
       $_SESSION['tempID'] = "post" . $_GET['postID'];
-      header("location:http://localhost/blogphp/index.php");
+      header("location:http://localhost/blogphp/profile.php?profileId=" . $_SESSION['profileId']);
     }
   }
-
 }
 
 ?>
@@ -140,85 +138,36 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Blog</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
 
-  <link rel="stylesheet" href="./css/utils.css">
-  <link rel="stylesheet" href="./css/navbar.css" />
-  <link rel="stylesheet" href="./css/maininterface.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/utils.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/maininterface.css">
 </head>
 
 <body>
   <?php include './partials/navbar.php'; ?>
-  <section id="main-interface">
-    <div class="sub-interface sub-interface-userdetail">
-      <div class="upper-brief-detail cardup">
-        <div class="col-color"></div>
-        <img src="<?php echo $_SESSION['profilePicLocation'] ?>" alt="logo" />
-        <div class="userdetails d-flex">
-          <div class="name-profession d-flex">
-            <h2><?php echo $name ?></h2>
-            <p><?php echo $userposition ?></p>
-          </div>
-          <hr />
-          <div class="userfollow d-flex">
-            <p>Following</p>
-            <span><?php echo $_SESSION['numberOfFollowing'] ?></span>
-            <br />
-            <p>Followers</p>
-            <span><?php echo $_SESSION['numberOfFollow'] ?></span>
-          </div>
-        </div>
-      </div>
-      <div class="lower-suggestion cardup">
-        <?php
-        $fetchUserSuggesion = "SELECT * from userdetails WHERE `username`!= '$username'";
-        $resultOfFetchUserSuggesion = mysqli_query($con, $fetchUserSuggesion);
-        $numOfFetchUserSuggesion = mysqli_num_rows($resultOfFetchUserSuggesion);
-
-        if ($numOfFetchUserSuggesion > 0) {
-          echo "<h3>Suggestions</h3>
-          <div class='suggest-user'>";
-          while ($detailOfFetchUserSuggesion = mysqli_fetch_assoc($resultOfFetchUserSuggesion)) {
-            $specificSuggestUserId = $detailOfFetchUserSuggesion['id'];
-
-            $fetchMyFollowing = "SELECT * from userfollowfollowing WHERE `id`= '$userid'";
-            $resultOfFetchMyFollowing = mysqli_query($con, $fetchMyFollowing);
-            $myFollowing = mysqli_fetch_assoc($resultOfFetchMyFollowing);
-            if (!in_array($specificSuggestUserId, unserialize($myFollowing['following']))) {
-              $specificSuggestUserName = $detailOfFetchUserSuggesion['name'];
-              $specificSuggestUserUserName = $detailOfFetchUserSuggesion['username'];
-              $specificSuggestUserPosition = $detailOfFetchUserSuggesion['userposition'];
-              $specificSuggestUserGender = strtolower($detailOfFetchUserSuggesion['usergender']);
-
-              if ($specificSuggestUserUserName != "admin") {
-                $specificSuggestUserProfilePicLocation =  file_exists("./img/profilepictures/$specificSuggestUserUserName.jpg") ? "./img/profilepictures/$specificSuggestUserUserName.jpg" : "./img/$specificSuggestUserGender.png";
-              } else {
-                $specificSuggestUserProfilePicLocation = "./img/logo.png";
-              }
-
-              echo "<div class='suggest-user-1 d-flex'>
-                  <img src='$specificSuggestUserProfilePicLocation' alt='suser' />
-                  <div class='minidetail'>
-                  <a href='profile.php?profileId=$specificSuggestUserId'>$specificSuggestUserName</a>
-                  <p>$specificSuggestUserPosition</p>
-                </div>
-              </div>
-              <hr />";
-            }
-          }
-        }
-
-        ?>
-      </div>
-    </div>
-    </div>
-    <!-- ----------------------------------------------------------------- -->
+  <section class="dashboard-interface d-flex">
     <div class="sub-interface sub-interface-blog">
       <?php
-      $fetchPost = "SELECT * from userposts WHERE `username`!= '$username'";
+      $specificUserID = $_GET['profileId'];
+
+      $fetchSpecificUsername = "SELECT * from userdetails WHERE `id`= '$specificUserID'";
+      $resultOfFetchSpecificUsername = mysqli_query($con, $fetchSpecificUsername);
+      $SpecificUser = mysqli_fetch_assoc($resultOfFetchSpecificUsername);
+
+      $SpecificUsername = $SpecificUser['username'];
+      $SpecificUserKoName = $SpecificUser['name'];
+      $SpecificUserPosition = $SpecificUser['userposition'];
+      $SpecificUserGender = $SpecificUser['usergender'];
+      $SpecificUserGenderForPP = strtolower($SpecificUser['usergender']);
+
+      $fetchPost = "SELECT * from userposts WHERE `username`= '$SpecificUsername'";
       $resultOfFetchPost = mysqli_query($con, $fetchPost);
       $numOfPost = mysqli_num_rows($resultOfFetchPost);
 
@@ -226,9 +175,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
       $resultOfFetchFollowingList = mysqli_query($con, $fetchFollowingList);
       $iAmFollowing = unserialize((mysqli_fetch_assoc($resultOfFetchFollowingList))['following']);
 
+      $_SESSION['otheruserprofilePicLocation'] =  file_exists("./img/profilepictures/$SpecificUsername.jpg") ? "./img/profilepictures/$SpecificUsername.jpg" : "./img/$SpecificUserGenderForPP.png";
+
       if ($numOfPost > 0) {
         while ($row = mysqli_fetch_assoc($resultOfFetchPost)) {
-          $specificUserKoName = $row['username'];
           $id = $row['id'];
           $title = $row['title'];
           $description = $row['description'];
@@ -236,31 +186,17 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
           $didILike = in_array($userid, unserialize($row['likes']));
           $likes = count(unserialize($row['likes']));
 
-          $fetchSpecificUser = "SELECT * from userdetails WHERE `username`= '$specificUserKoName'";
-          $resultOfFetchSpecificUser = mysqli_query($con, $fetchSpecificUser);
-          $detailOfSpecificUser = mysqli_fetch_assoc($resultOfFetchSpecificUser);
-
-          $SpecificUserID = $detailOfSpecificUser["id"];
-          $SpecificUserName = $detailOfSpecificUser["name"];
-          $SpecificUserUserName = $detailOfSpecificUser["username"];
-          $SpecificUserPosition = $detailOfSpecificUser["userposition"];
-          $SpecificUserGender = strtolower($detailOfSpecificUser["usergender"]);
-
-          $amIFollowing = in_array($SpecificUserID, $iAmFollowing);
-
-          if ($SpecificUserUserName != "admin") {
-            $specificUserProfilePicLocation =  file_exists("./img/profilepictures/$SpecificUserUserName.jpg") ? "./img/profilepictures/$SpecificUserUserName.jpg" : "./img/$SpecificUserGender.png";
-          } else {
-            $specificUserProfilePicLocation = "./img/logo.png";
-          }
-
           echo "<div class='userblog cardup' id='post" . $id . "'>
-            <div class='userblog-profile d-flex'>
-              <img src='$specificUserProfilePicLocation' alt='logo' />
+            <div class='userblog-profile d-flex'>";
+
+            if($SpecificUsername != "admin"){
+              echo "<img src='".$_SESSION['otheruserprofilePicLocation']."' alt='logo' />";
+            }else{
+              echo "<img src='./img/logo.png' alt='logo' />";
+            }
+              echo "
               <div class='userblog-profile-nameposition'>
-              <form method='GET'>
-                <h3><a href='profile.php?profileId=$SpecificUserID'>$SpecificUserName</a></h3>
-                </form>
+                <h3>$SpecificUserKoName</h3>
                 <h5>$SpecificUserPosition</h5>
               </div>
             </div>
@@ -273,57 +209,87 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <form>
               <div class='userblog-interaction d-flex'>";
           echo (!$didILike) ? "
-                <a href='http://localhost/blogphp/index.php?likePostID=$id' class='btn userinteract-btn' id='like'>
+                <a href='profile.php?likePostID=$id' class='btn userinteract-btn' id='like'>
                   <i class='fa-sharp fa-solid fa-heart'></i>Like &nbsp;<span>$likes</span>
-                </a>" : "<a href='http://localhost/blogphp/index.php?disLikePostID=$id' class='btn userinteract-btn' id='disLike'>
+                </a>" : "<a href='profile.php?disLikePostID=$id' class='btn userinteract-btn' id='disLike'>
                 <i class='fa-sharp fa-solid fa-heart'></i>Liked &nbsp;<span>$likes</span>
               </a>";
-          echo (!$amIFollowing) ? "
-                <a href='http://localhost/blogphp/index.php?followUserID=$SpecificUserID&postID=$id' class='btn userinteract-btn' id='follow'>
-                  <i class='fa-solid fa-cloud-bolt'></i>Follow
-                </a>" : "<a href='http://localhost/blogphp/index.php?unFollowUserID=$SpecificUserID' class='btn userinteract-btn' id='follow'>
-                <i class='fa-solid fa-cloud-bolt'></i>Followed
-              </a>";
-          echo "
-              </div>
+              echo 
+              "</div>
             </form>
           </div>";
         }
       }
       ?>
     </div>
-    <div class="sub-interface sub-interface-news">
-      <div class="news-upper cardup">
-        <div class="slogan d-flex">
-          <img src="./img/logo.png" alt="logo" height="40vh" />
-          <p>BLOG GRAM</p>
-          <span>we blog to perfection</span>
-        </div>
-        <hr />
-        <div class="signupnow d-flex">
-          <a href="<?php echo ($_SESSION['username'] == "admin") ? "admin.php" : "dashboard.php" ?>"> <button class="btn userinteract-btn">Dashboard</button></a>
-        </div>
-      </div>
-      <div class='news-lower cardup'>
+    <div class="dashboard-right cardup">
+      <div class="picNamePosition d-flex">
         <?php
-        $fetchDoYouKnow = "SELECT * FROM `doyouknow` ORDER BY id DESC";
-        $resultOfFetchDoYouKnow = mysqli_query($con, $fetchDoYouKnow);
-        if (mysqli_num_rows($resultOfFetchDoYouKnow) > 0) {
-          echo "<h3>Do You Know?</h3>
-          <hr />
-          <div class='news-lower-list'>";
+        $fetchProfileUserKoFollowFollowing = "SELECT * from userfollowfollowing WHERE `id`= '$specificUserID'";
+        $resultOfFetchProfileUserKoFollowFollowing = mysqli_query($con, $fetchProfileUserKoFollowFollowing);
+        $detailOfProfileUserKoFollowFollowing = mysqli_fetch_assoc($resultOfFetchProfileUserKoFollowFollowing);
 
-          while ($row = mysqli_fetch_assoc($resultOfFetchDoYouKnow)) {
-            $description = $row['description'];
-            echo "<div class='newscard'>$description</div>";
-          }
+        $profileUserKoFollowing = count(unserialize($detailOfProfileUserKoFollowFollowing['following']));
+        $profileUserKoFollow = count(unserialize($detailOfProfileUserKoFollowFollowing['follow']));
+
+        if($SpecificUsername != "admin"){
+          echo "<img src='".$_SESSION['otheruserprofilePicLocation']."' alt='logo' />";
+        }else{
+          echo "<img src='./img/logo.png' alt='logo' />";
         }
         ?>
+        <div class="namePosition">
+          <h2><?php echo strtoupper($SpecificUserKoName) ?></h2>
+          <span><?php echo $SpecificUserPosition ?></span>
+        </div>
+        <?php echo "
+        <form>
+              <div class='userblog-interaction d-flex'>";
+        $amIFollowing = in_array($specificUserID, $iAmFollowing);
+        echo (!$amIFollowing) ? "
+                <a href='profile.php?followUserID=$specificUserID' class='btn userinteract-btn' id='follow'>
+                  <i class='fa-solid fa-cloud-bolt'></i>Follow
+                </a>" : "<a href='profile.php?unFollowUserID=$specificUserID' class='btn userinteract-btn' id='follow'>
+                <i class='fa-solid fa-cloud-bolt'></i>Followed
+              </a>";
+        echo "
+              </div>
+            </form>";
+        ?>
       </div>
-    </div>
+      <hr>
+      <div class="followFollowing d-flex">
+        <div class="followers d-flex">
+          <span><?php echo $profileUserKoFollow ?></span>
+          <p>Followers</p>
+        </div>
+        <div class="following d-flex">
+          <span><?php echo $profileUserKoFollowing ?></span>
+          <p>Following</p>
+        </div>
+      </div>
+      <hr>
+      <form id="form" method="POST" enctype="multipart/form-data">
+        <div class="otherInfo">
+          <div class="otherInfoContent">
+            <label>USERNAME</label>
+            <input value="<?php echo $SpecificUserKoName ?>" disabled>
+          </div>
+          <div class="otherInfoContent">
+            <label>GENDER</label>
+            <input type="text" placeholder="ENTER YOUR GENDER" value="<?php echo ucfirst($SpecificUserGender) ?>" disabled>
+          </div>
+          <div class="otherInfoContent">
+            <label>POSITION</label>
+            <input type="text" name="position" placeholder="ex designer,editor" value="<?php echo $SpecificUserPosition ?>" disabled>
+          </div>
+        </div>
+      </form>
     </div>
   </section>
   <script src="https://kit.fontawesome.com/4187f8db55.js" crossorigin="anonymous"></script>
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </body>
 
 </html>
