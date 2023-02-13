@@ -161,7 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 </form>
             </div>
             <?php
-            $fetchSpecificPost = "SELECT * from userposts WHERE `username`= '$username'";
+            $fetchSpecificPost = "SELECT * from userposts WHERE `username`= '$username' ORDER BY id DESC";
             $resultOfFetchSpecificPost = mysqli_query($con, $fetchSpecificPost);
             $numOfSpecificPost = mysqli_num_rows($resultOfFetchSpecificPost);
 

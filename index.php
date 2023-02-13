@@ -132,7 +132,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
       header("location:http://localhost/blogphp/index.php");
     }
   }
-
 }
 
 ?>
