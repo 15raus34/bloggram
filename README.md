@@ -4,6 +4,7 @@
 🔭This Project is Based on PHP Application <br>
 
 ## ❗❕ To Do:
-* Basic Validations During Login & Signup
+* Minor Form Validation
+* Every Follow & Following List Update After Deleting User By Admin
 
   

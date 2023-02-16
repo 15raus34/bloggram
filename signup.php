@@ -5,6 +5,9 @@ if (isset($_SESSION['loggedIn'])) {
   exit();
 }
 $exist = false;
+$didMatch = false;
+$empty = false;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   include 'partials/dbconnect.php';
   $name = $_POST["name"];
@@ -19,10 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if ($numOfUserName > 0) {
     $exist = true;
   } else {
-    $exist = false;
-    if (($password != "") && ($password == $repassword) && ($exist == false)) {
+    if ($name == "" || $useremail == "" || $username == "" || $password == "") {
+      $empty = true;
+    } else if ($password != $repassword) {
+      $didMatch = true;
+    } else if (($password != "") && ($password == $repassword) && ($exist == false)) {
       $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-      $sql = "INSERT INTO `userdetails` (`name`, `useremail`, `usergender`, `userposition`, `phone_no`, `username`, `password`, `userphoto`, `securitycode`, `createdtime`) VALUES ('$name', '$useremail', '$usergender', 'Bloggram User', NULL, '$username', '$passwordHash', NULL, NULL, current_timestamp())";
+      $sql = "INSERT INTO `userdetails` (`name`, `useremail`, `usergender`, `userposition`, `phone_no`, `username`, `password`,`securitycode`, `createdtime`) VALUES ('$name', '$useremail', '$usergender', 'Bloggram User', NULL, '$username', '$passwordHash', NULL, current_timestamp())";
       $result1 = mysqli_query($con, $sql);
 
       $serializedArray = serialize(array());
@@ -44,6 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SignUp</title>
 
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
   <link rel="stylesheet" href="css/utils.css" />
   <link rel="stylesheet" href="css/signup-login.css" />
 </head>
@@ -54,6 +62,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <img src="./img/logo.png" alt="" />
     </div>
     <div class="form-card cardup">
+      <?php
+      if ($empty) {
+        echo
+        "<div class='alert alert-danger' role='alert'>
+        <strong>Empty</strong> Fields.
+      </div>";
+      }
+      ?>
+      <?php
+      if ($exist) {
+        echo
+        "<div class='alert alert-danger' role='alert'>
+        <strong>Username</strong> Already Taken.
+      </div>";
+      }
+      ?>
+      <?php
+      if ($didMatch) {
+        echo
+        "<div class='alert alert-danger' role='alert'>
+        <strong>Passwords</strong> Didn't Match.
+      </div>";
+      }
+      ?>
       <form method="post">
         <div class="formcontent">
           <label>Name</label>
@@ -87,6 +119,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </form>
     </div>
   </section>
+
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
 </body>
 
 </html>

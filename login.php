@@ -1,5 +1,7 @@
 <?php
 session_start();
+
+$empty=false;
 $login = true;
 
 if (isset($_SESSION['loggedIn'])) {
@@ -13,7 +15,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $userCheck = "SELECT * from userdetails WHERE `username` = '$username'";
   $resultOfUserCheck = mysqli_query($con, $userCheck);
   $numOfUser = mysqli_num_rows($resultOfUserCheck);
-  if ($numOfUser == 1) {
+  if ($username == "" || $password == "") {
+    $empty = true;
+  } else if ($numOfUser == 1) {
     while ($row = mysqli_fetch_assoc($resultOfUserCheck)) {
       if (password_verify($password, $row['password'])) {
         $login = true;
@@ -83,6 +87,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <div class="form-card cardup">
+      <?php
+      if ($empty) {
+        echo
+        "<div class='alert alert-danger' role='alert'>
+        <strong>Empty</strong> Fields.
+      </div>";
+      }
+      ?>
       <?php
       if (!$login) {
         echo
