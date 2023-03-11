@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfUpdateLikeInPost = mysqli_query($con, $updateLikeInPost);
     if ($resultOfUpdateLikeInPost) {
       $_SESSION['tempID'] = "post" . $likePostKoId;
-      header("location:http://localhost/blogphp/profile.php?profileId=" . $_SESSION['profileId']);
+      header("location:http://localhost/bloggram/profile.php?profileId=" . $_SESSION['profileId']);
     }
   }
 
@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfUpdateDisLikeInPost = mysqli_query($con, $updateDisLikeInPost);
     if ($resultOfUpdateDisLikeInPost) {
       $_SESSION['tempID'] = "post" . $disLikePostKoId;
-      header("location:http://localhost/blogphp/profile.php?profileId=" . $_SESSION['profileId']);
+      header("location:http://localhost/bloggram/profile.php?profileId=" . $_SESSION['profileId']);
     }
   }
 
@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfOtherUserKoFollowers = mysqli_query($con, $updateOtherUserKoFollowers);
     if ($resultOfLoggedInUserKoFollowing && $resultOfOtherUserKoFollowers) {
       $_SESSION['tempID'] = "post" . $_GET['postID'];
-      header("location:http://localhost/blogphp/profile.php?profileId=" . $_SESSION['profileId']);
+      header("location:http://localhost/bloggram/profile.php?profileId=" . $_SESSION['profileId']);
     }
   }
 
@@ -128,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfOtherUserKoFollowers = mysqli_query($con, $updateOtherUserKoFollowers);
     if ($resultOfLoggedInUserKoFollowing && $resultOfOtherUserKoFollowers) {
       $_SESSION['tempID'] = "post" . $_GET['postID'];
-      header("location:http://localhost/blogphp/profile.php?profileId=" . $_SESSION['profileId']);
+      header("location:http://localhost/bloggram/profile.php?profileId=" . $_SESSION['profileId']);
     }
   }
 }

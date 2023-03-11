@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfUpdateLikeInPost = mysqli_query($con, $updateLikeInPost);
     if ($resultOfUpdateLikeInPost) {
       $_SESSION['tempID'] = "post" . $likePostKoId;
-      header("location:http://localhost/blogphp/index.php");
+      header("location:http://localhost/bloggram/index.php");
     }
   }
 
@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfUpdateDisLikeInPost = mysqli_query($con, $updateDisLikeInPost);
     if ($resultOfUpdateDisLikeInPost) {
       $_SESSION['tempID'] = "post" . $disLikePostKoId;
-      header("location:http://localhost/blogphp/index.php");
+      header("location:http://localhost/bloggram/index.php");
     }
   }
 
@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfOtherUserKoFollowers = mysqli_query($con, $updateOtherUserKoFollowers);
     if ($resultOfLoggedInUserKoFollowing && $resultOfOtherUserKoFollowers) {
       $_SESSION['tempID'] = "post" . $_GET['postID'];
-      header("location:http://localhost/blogphp/index.php");
+      header("location:http://localhost/bloggram/index.php");
     }
   }
 
@@ -129,7 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfOtherUserKoFollowers = mysqli_query($con, $updateOtherUserKoFollowers);
     if ($resultOfLoggedInUserKoFollowing && $resultOfOtherUserKoFollowers) {
       $_SESSION['tempID'] = "post" . $_GET['postID'];
-      header("location:http://localhost/blogphp/index.php");
+      header("location:http://localhost/bloggram/index.php");
     }
   }
 }
@@ -272,15 +272,15 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <form>
               <div class='userblog-interaction d-flex'>";
           echo (!$didILike) ? "
-                <a href='http://localhost/blogphp/index.php?likePostID=$id' class='btn userinteract-btn' id='like'>
+                <a href='http://localhost/bloggram/index.php?likePostID=$id' class='btn userinteract-btn' id='like'>
                   <i class='fa-sharp fa-solid fa-heart'></i>Like &nbsp;<span>$likes</span>
-                </a>" : "<a href='http://localhost/blogphp/index.php?disLikePostID=$id' class='btn userinteract-btn' id='disLike'>
+                </a>" : "<a href='http://localhost/bloggram/index.php?disLikePostID=$id' class='btn userinteract-btn' id='disLike'>
                 <i class='fa-sharp fa-solid fa-heart'></i>Liked &nbsp;<span>$likes</span>
               </a>";
           echo (!$amIFollowing) ? "
-                <a href='http://localhost/blogphp/index.php?followUserID=$SpecificUserID&postID=$id' class='btn userinteract-btn' id='follow'>
+                <a href='http://localhost/bloggram/index.php?followUserID=$SpecificUserID&postID=$id' class='btn userinteract-btn' id='follow'>
                   <i class='fa-solid fa-cloud-bolt'></i>Follow
-                </a>" : "<a href='http://localhost/blogphp/index.php?unFollowUserID=$SpecificUserID' class='btn userinteract-btn' id='follow'>
+                </a>" : "<a href='http://localhost/bloggram/index.php?unFollowUserID=$SpecificUserID' class='btn userinteract-btn' id='follow'>
                 <i class='fa-solid fa-cloud-bolt'></i>Followed
               </a>";
           echo "
