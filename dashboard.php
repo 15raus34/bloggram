@@ -42,6 +42,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = mysqli_query($con, $sql);
 
         $target_dir = "./img/profilepictures/";
+
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0755, true);
+        }
+        
         $file_extension = pathinfo($_FILES["profilePicture"]["name"], PATHINFO_EXTENSION);
         $new_file_name = "$username." . $file_extension;
         $target_file = $target_dir . $new_file_name;
@@ -72,11 +77,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     //To Delete The User From Database
-    if(isset($_POST['deleteAccount'])){
+    if (isset($_POST['deleteAccount'])) {
         $_SESSION['deleteConfirm?'] = "YES";
     }
 
-    if (isset($_POST['confirmDeleteAccount']) && ($_SESSION['deleteConfirm?']=="YES")) {
+    if (isset($_POST['confirmDeleteAccount']) && ($_SESSION['deleteConfirm?'] == "YES")) {
         $id = $_SESSION['id'];
 
         $fetchUser = "SELECT * FROM `userdetails` WHERE `id` = '$id'";
@@ -113,12 +118,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     }
 
     //To Delete The Existing Post
-    if (isset($_GET['deletePostID'])){
-        $_SESSION['confirmDeletePostID']="YES".$_GET['deletePostID'];
+    if (isset($_GET['deletePostID'])) {
+        $_SESSION['confirmDeletePostID'] = "YES" . $_GET['deletePostID'];
         echo "<script>location.hash = '#post" . $_GET['deletePostID'] . "';</script>";
     }
-    
-    if (isset($_GET['confirmDeletePostID']) && $_SESSION['confirmDeletePostID']==("YES".$_GET['confirmDeletePostID'])) {
+
+    if (isset($_GET['confirmDeletePostID']) && $_SESSION['confirmDeletePostID'] == ("YES" . $_GET['confirmDeletePostID'])) {
         $deletingPostId = $_GET['confirmDeletePostID'];
         $deletingPost = "DELETE FROM `userposts` WHERE `id` = '$deletingPostId'";
         $resultOfDeletingPost = mysqli_query($con, $deletingPost);
@@ -239,17 +244,16 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                     <i class='fa-solid fa-pen-to-square'></i>Edit
                                     </a>";
 
-                                    if(isset($_GET['deletePostID']) && $_SESSION['confirmDeletePostID']==("YES".$specificPostKoID)){
-                                        echo "<a class='btn userinteract-btn' href='dashboard.php?confirmDeletePostID=$specificPostKoID'  name='deleteOwnPost'>
+                    if (isset($_GET['deletePostID']) && $_SESSION['confirmDeletePostID'] == ("YES" . $specificPostKoID)) {
+                        echo "<a class='btn userinteract-btn' href='dashboard.php?confirmDeletePostID=$specificPostKoID'  name='deleteOwnPost'>
                                         <i class='fa-solid fa-trash'></i>Confirm?
                                         </a>";
-                                    }
-                                    else{
-                                        echo "<a class='btn userinteract-btn' href='dashboard.php?deletePostID=$specificPostKoID'  name='deleteOwnPost'>
+                    } else {
+                        echo "<a class='btn userinteract-btn' href='dashboard.php?deletePostID=$specificPostKoID'  name='deleteOwnPost'>
                                         <i class='fa-solid fa-trash'></i>Delete
                                         </a>";
-                                    }
-                                    echo "</form>
+                    }
+                    echo "</form>
                             </div>
                         </div>";
                 }
