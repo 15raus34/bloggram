@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfOtherUserKoFollowers = mysqli_query($con, $updateOtherUserKoFollowers);
     if ($resultOfLoggedInUserKoFollowing && $resultOfOtherUserKoFollowers) {
       $_SESSION['tempID'] = "post" . $_GET['postID'];
-      header("location:http://localhost/bloggram/profile.php?profileId=" . $_SESSION['profileId']);
+      header("location:http://localhost/bloggram/profile.php?profileId=" . $_GET['followUserID']);
     }
   }
 
@@ -128,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultOfOtherUserKoFollowers = mysqli_query($con, $updateOtherUserKoFollowers);
     if ($resultOfLoggedInUserKoFollowing && $resultOfOtherUserKoFollowers) {
       $_SESSION['tempID'] = "post" . $_GET['postID'];
-      header("location:http://localhost/bloggram/profile.php?profileId=" . $_SESSION['profileId']);
+      header("location:http://localhost/bloggram/profile.php?profileId=" . $_GET['unFollowUserID']);
     }
   }
 }
